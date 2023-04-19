@@ -1,0 +1,17 @@
+
+*.pyc
+*.tif
+.idea/
+/data/
+/src/tests/data/
+/venv
+/src/apd_x.npy
+/src/filtered_calcium_image.npy
+/src/filtered_voltage_image.npy
+/src/gg.csv
+/src/img_mod.csv
+/src/apd50_alt_1.npy
+/src/apd50_alt_2.npy
+/src/apd50_alt_coeff.npy
+/src/data_crop.npy
+/src/data.npy
