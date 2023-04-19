@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>WindowMDI</class>
+ <widget class="QMainWindow" name="WindowMDI">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1000</width>
+    <height>700</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>KairoSight</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QMdiArea" name="mdiArea"/>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1000</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuOpen">
+    <property name="title">
+     <string>Open</string>
+    </property>
+    <addaction name="actionTIFF"/>
+    <addaction name="actionFolder"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menuExport">
+    <property name="title">
+     <string>Export</string>
+    </property>
+   </widget>
+   <addaction name="menuOpen"/>
+   <addaction name="menuExport"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionTIFF">
+   <property name="text">
+    <string>TIFF</string>
+   </property>
+   <property name="toolTip">
+    <string>.tiff, .tif</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="text">
+    <string>Close</string>
+   </property>
+  </action>
+  <action name="actionFolder">
+   <property name="text">
+    <string>Folder</string>
+   </property>
+  </action>
+  <action name="actionStart_ImagePrep">
+   <property name="text">
+    <string>Start wizard</string>
+   </property>
+  </action>
+  <action name="actionStart_Isolate">
+   <property name="text">
+    <string>Start wizard</string>
+   </property>
+  </action>
+  <action name="actionStart_Analyze">
+   <property name="text">
+    <string>Start wizard</string>
+   </property>
+  </action>
+  <action name="actionStart_Export">
+   <property name="text">
+    <string>Start wizard</string>
+   </property>
+  </action>
+  <action name="actionExport_CopyPaste">
+   <property name="text">
+    <string>for Copy + Paste</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
