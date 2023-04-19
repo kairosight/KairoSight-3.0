@@ -1,0 +1,54 @@
+GIMP Palette
+Name: batlow 50 Swatches
+Columns: 1
+#
+  1  25  89	batlow-1 #011959
+  4  31  90	batlow-6 #041F5A
+  6  36  91	batlow-11 #06245B
+  9  42  92	batlow-17 #092A5C
+ 11  47  93	batlow-22 #0B2F5D
+ 13  52  94	batlow-27 #0D345E
+ 15  58  95	batlow-32 #0F3A5F
+ 17  63  96	batlow-37 #113F60
+ 19  69  96	batlow-43 #134560
+ 22  75  97	batlow-48 #164B61
+ 25  80  97	batlow-53 #195061
+ 29  85  97	batlow-58 #1D5561
+ 33  90  96	batlow-63 #215A60
+ 40  96  95	batlow-69 #28605F
+ 46 100  92	batlow-74 #2E645C
+ 52 104  90	batlow-79 #34685A
+ 59 107  86	batlow-84 #3B6B56
+ 66 110  83	batlow-89 #426E53
+ 75 114  78	batlow-95 #4B724E
+ 83 116  74	batlow-100 #53744A
+ 90 119  70	batlow-105 #5A7746
+ 98 121  65	batlow-110 #627941
+106 123  61	batlow-115 #6A7B3D
+115 126  56	batlow-121 #737E38
+123 128  53	batlow-126 #7B8035
+132 131  50	batlow-131 #848332
+141 133  47	batlow-136 #8D852F
+153 136  46	batlow-142 #99882E
+163 138  46	batlow-147 #A38A2E
+174 141  49	batlow-152 #AE8D31
+185 143  53	batlow-157 #B98F35
+195 145  59	batlow-162 #C3913B
+207 147  67	batlow-168 #CF9343
+217 149  75	batlow-173 #D9954B
+225 151  85	batlow-178 #E19755
+233 153  94	batlow-183 #E9995E
+239 156 105	batlow-188 #EF9C69
+245 160 118	batlow-194 #F5A076
+249 163 128	batlow-199 #F9A380
+251 166 139	batlow-204 #FBA68B
+253 170 150	batlow-209 #FDAA96
+253 173 160	batlow-214 #FDADA0
+253 177 173	batlow-220 #FDB1AD
+253 181 183	batlow-225 #FDB5B7
+253 185 194	batlow-230 #FDB9C2
+253 188 204	batlow-235 #FDBCCC
+252 192 215	batlow-240 #FCC0D7
+252 196 228	batlow-246 #FCC4E4
+251 200 239	batlow-251 #FBC8EF
+250 204 250	batlow-256 #FACCFA

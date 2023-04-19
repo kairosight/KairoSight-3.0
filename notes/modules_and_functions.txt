@@ -1,0 +1,55 @@
+Functions defined within each Kairosight Module:
+1. preparation
+	a. open_signal: Open an array of optical data from a text file (.csv)
+	b. open_stack: Open a stack of images (.tif, .tiff, .pcoraw) from a file
+	c. crop_stack: Crop a stack (3-D array, TYX) of optical data, by default removes from right and bottom
+	d. reduce_stack: Rescale the X,Y dimensions of a stack (3-D array, TYX) of optical data
+	e. mask_generate: Generate a mask for a frame 2-D array (Y, X) of grayscale optical data
+	f. mask_apply: Apply a binary mask to segment a stack (3-D array, TYX) of grayscale optical data
+	g. get_gradient: Calculate the x and y gradients using a Sobel operator
+	h. align_stacks: Aligns two stacks of images
+2. processing
+	a. spline_signal: ?
+	b. spline_deriv: Calculates the derivative of spline_signal output?
+	c. find_tran_peak: Find the index of the peak of a transient, defined as the maximum value
+	d. find_tran_baseline: Find the value of the signal baseline?
+	e. find_tran_act: Find the time of the activation of a transient, defined as the the maximum of the 1st derivative OR
+	f. align_signals: Aligns two signal arrays using signal.correlate
+	g. isolate_spatial: Isolate a spatial region of a stack (3-D array, TYX) of grayscale optical data [PLACEHOLDER]
+	h. isolate_temportal: Isolate a temporal region of a stack (3-D array, TYX) of grayscale optical data [PLACEHOLDER]
+	i. isolate_transients: Isolate similar transients from a signal array of optical data
+	j. filter_spatial: Spatially filter a frame (2-D array, YX) of grayscale optical data
+	k. filter_temportal: Apply a lowpass filter to an array of optical data
+	l. filter_drift: Remove drift from an array of optical data using the subtraction of a polynomial fit
+	m. invert_signal: Invert the values of a signal array
+	n. invert_stack: Invert the values of an image stack (3-D array)
+	o. normalize_signal: Normalize the values of a signal array to range from 0 to 1
+	p. normalize_stack: Normalize the values of an image stack (3-D array) to range from 0 to 1
+	q. calc_ff0: Normalize a fluorescence signal against a resting fluorescence
+	r. calculate_snr: alculate the Signal-to-Noise ratio of a signal array
+	s. map_snr: Generate a map_out of Signal-to-Noise ratios for signal arrays within a stack
+	t. calc_ensemble: Convert a signal from multiple transients to an averaged signal
+	u. calc_ensemble_stack: Convert a stack from pixels with multiple transients to those with an averaged signal
+	v. calc_error: Calculate the amount of error created by signal modulation or filtering
+3. analysis
+	a. find_tran_start: Find the time of the start of a transient, defined as the 1st maximum of the 2nd derivative
+	b. find_tran_downstroke: Find the time of the downstroke of a transient, defined as the minimum of the 1st derivative
+	c. find_tran_end: Find the time of the end of a transient, defined as the 2nd maximum of the 2nd derivative
+	d. calc_tran_activation: Calculate the time of the activation of a transient, 
+	   defined as the midpoint (not limited by sampling rate) between the start and peak times (specific to calcium transient?)
+	e. calc_tran_duration: Calculate the duration of a transient (APD)
+	f. calc_tran_tau: Calculate the decay time constant (tau) of a transient, defined as the time between 30 and 90% decay from peak
+	g. calc_tran_di: Calculate the diastolic interval (DI) of a transient
+	h. map_tran_analysis: Map an analysis point's values for a stack of transient fluorescent data
+	i. map_tran_tau: Map the decay constant (tau) values for a stack of transient fluorescent data [PLACEHOLDER]
+	j. map_tran_dfreq: Map the dominant frequency values for a stack of transient fluorescent data [PLACEHOLDER]
+	k. calc_phase: Convert a signal from its fluorescent value to its phase, ranging from -pi to +pi
+	l. calc_coupling: Find the Excitation-Contraction (EC) coupling time, defined as the difference between voltage and calcium activation times
+	m. map_coupling: Find the Excitation-Contraction (EC) coupling time, defined as the difference between voltage and calcium activation times (Maps results of l)
+4. datamodel
+	a. model_transients: Create a 2-D array of model 16-bit optical data of either murine action potentials (OAP) or murine calcium transients (OCT)
+	b. model_transients_pig: Create a 2-D array of model 16-bit optical data of either pig action potentials (OAP) or pig calcium transients (OCT)
+	c. model_stack: Create a stack (3-D array, TYX) of model 16-bit optical data of a murine action potential (OAP) or a murine calcium transient (OCT)
+	d. model_stack_propagation: Create a stack (3-D array, TYX) of model 16-bit optical data of a propagating murine action potential (OAP) or a propagating murine calcium transient (OCT)
+	e. model_stack_heart: Create a stack (3-D array, TYX) of model 16-bit optical data of a propagating murine action potential (OAP) or a propagating murine calcium transient (OCT), with a "dark" background around the pixels of interest.
+	f. circle_area: Code for example tests
