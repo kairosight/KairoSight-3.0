@@ -120,8 +120,8 @@ class ImagingAnalysis:
                     win1=1000
                     for k in range(start,end):
                         if imgf[k,j,i] > (((1-perc_apd) - 0.05) 
-                                          and imgf[k,j,i] < ((1-perc_apd) + 
-                                                             0.05)):
+                                          and imgf[k,j,i] < 
+                                          ((1-perc_apd) + 0.05)):
                             win=abs((1-perc_apd)-imgf[k,j,i])
                             if win<win1:
                                 win1=win
@@ -163,8 +163,8 @@ class ImagingAnalysis:
                     win1=1000
                     for k in range(start,end):
                         if imgf_2[k,j,i] > (((1-perc_apd) - 0.05) 
-                                           and imgf_2[k,j,i] < ((1-perc_apd) + 
-                                                                 0.05)):
+                                            and imgf_2[k,j,i] < 
+                                            ((1-perc_apd) + 0.05)):
                             win=abs((1-perc_apd)-imgf_2[k,j,i]) 
                             if win<win1:
                                 win1=win
@@ -204,7 +204,8 @@ class ImagingAnalysis:
                 delimiter=',')
 
  
-    def ec_coupling_map_rep(self,fps,li1, li2, transp, start,end,apd_perc,interp):
+    def ec_coupling_map_rep(self,fps,li1, li2, transp, start, end, 
+                            apd_perc,interp):
         volt=load('filtered_voltage_image.npy')
         cal=load('filtered_calcium_image.npy')
        
@@ -301,7 +302,8 @@ class ImagingAnalysis:
 
            for i in range(aa[1]):
                for j in range(aa[2]):
-                   hh, _ = find_peaks(imgff[:,i,j], height=0.4,width=peak_coeff)
+                   hh, _ = find_peaks(imgff[:,i,j], height=0.4,
+                                      width=peak_coeff)
                    hh=hh.astype(int)
                    hh_size=np.shape(hh)
                    hh2=int(hh_size[0])
@@ -519,16 +521,15 @@ class ImagingAnalysis:
             mean = str(round(np.mean(data), 2))
             median = str(round(np.median(data), 2))
             
-            print("\nFrom the "+str(i+1)+" region:\n\nMean:"+mean+"\nMedian:"+median)
-            
-        plt.close()
+            print("\nFrom the "+str(i+1)+" region:\n\nMean:"+mean+"\nMedian:"+
+                  median)
         
     def S1_S2(self, fps, img, li1, li2, transp, start_ind, end_ind, 
                     start_ind2, end_ind2, interp_selection, perc_apd, 
                     image_type, peak_coeff):
       
         apd1= self.apd_analysis(fps, img, start_ind, end_ind, 
-                                     interp_selection, perc_apd)[0]
+                                interp_selection, perc_apd)[0]
         
         imgf=copy.deepcopy(img)
 
@@ -578,11 +579,8 @@ class ImagingAnalysis:
            for j in range(aa[2]):
                 if peak2[i,j]>peak1[i,j] and peak2[i,j]>0:
                     midP[i,j]=np.amin(imgff[peak1[i,j]:peak2[i,j],i,j])
-                    midP_idx[i,j]=np.argmin((imgff[peak1[i,j]:
-                                                   peak2[i,j],i,j])+peak1[i,j])
-                    dvdtmax=np.argmax((np.diff(imgff[midP_idx[i,j].astype(int):
-                                                     peak2[i,j],i,j])) 
-                                      + midP_idx[i,j])
+                    midP_idx[i,j]=np.argmin((imgff[peak1[i,j]:peak2[i,j],i,j])+peak1[i,j])
+                    dvdtmax=np.argmax(np.diff(imgff[midP_idx[i,j].astype(int):peak2[i,j],i,j]))+midP_idx[i,j]
                     win1=1000
                     min_inx=0
                     for k in range(peak2[i,j], (aa[0]*0.95).astype(int)):
@@ -596,7 +594,7 @@ class ImagingAnalysis:
                     apd2[i,j]=min_inx-dvdtmax 
                         
         apd2=(1000/fps)/interp_selection*apd2      
-        diff=apd1-apd2    
+        diff=apd1-apd2   
         plt.figure('S1 Duration')
         self.imaging_mapping(apd1, li1, li2, transp)
         
@@ -640,7 +638,8 @@ class ImagingAnalysis:
         for i in range(aa[1]):
            for j in range(aa[2]): 
                amp0[i,j]=imgf2_2[peak0[i,j],i,j]
-               amp1[i,j]=imgff[peak2[i,j],i,j]-imgff[midP_idx[i,j].astype(int),i,j]
+               amp1[i,j]=imgff[peak2[i,j],i,j]-imgff[midP_idx[i,j].astype(int),
+                                                     i,j]
                amp_coeff[i,j]=(1-(amp1[i,j]/amp0[i,j]))*100
                
         amp_coeff[amp_coeff == -inf] = 0       
