@@ -526,7 +526,7 @@ class ImagingAnalysis:
         
     def S1_S2(self, fps, img, li1, li2, transp, start_ind, end_ind, 
                     start_ind2, end_ind2, interp_selection, perc_apd, 
-                    image_type, peak_coeff):
+                    image_type, peak_coeff, threshold):
       
         apd1= self.apd_analysis(fps, img, start_ind, end_ind, 
                                 interp_selection, perc_apd)[0]
@@ -552,7 +552,7 @@ class ImagingAnalysis:
         
         for i in range(aa[1]):
            for j in range(aa[2]): 
-               hh, _ = find_peaks(imgff[:,i,j], height=0.7,width=peak_coeff)
+               hh, _ = find_peaks(imgff[:,i,j], height=threshold,width=peak_coeff)
                hh=hh.astype(int)
                hh_size=np.shape(hh)
                hh2=int(hh_size[0])
@@ -624,7 +624,7 @@ class ImagingAnalysis:
         
         for i in range(aa[1]): 
             for j in range(aa[2]): 
-                hh0, _ = find_peaks(imgf2_2[:,i,j], height=0.7, 
+                hh0, _ = find_peaks(imgf2_2[:,i,j], height=threshold, 
                                     width=peak_coeff)
                 hh0=hh0.astype(int)
                 hh0_size=np.shape(hh0)
