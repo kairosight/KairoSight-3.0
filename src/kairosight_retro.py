@@ -11,7 +11,9 @@ from numpy import loadtxt, load, save, savetxt
 import numpy as np
 import os
 from PyQt5 import QtCore
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, QObject, QRunnable, QThreadPool
+from PyQt5.QtCore import (pyqtSignal, pyqtSlot, QObject, QRunnable, Qt, 
+                          QThreadPool)
+from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QApplication, QFileDialog, QMessageBox, QWidget
 import sys
 import time
@@ -415,9 +417,20 @@ class MainWindow(QWidget, Ui_MainWindow):
                                                          "CaD"))
                 self.analysis_drop.setItemText(2, _translate("MainWindow", 
                                                          "CaD Ensemble"))
-                self.analysis_drop.setItemText(3,
-                                               _translate("MainWindow",
-                                                          "Fixed CaD Alternan"))
+                self.analysis_drop.setItemText(3, _translate("MainWindow", 
+                                                             "Fixed APD Alternan"))
+                
+                #note all the functionality is disabled (in code below when:
+                #self.analysis_drop.currentIndex() == 1 and 
+                #self.image_type_drop.currentIndex() == 1), when user selects 
+                #this option with calcium images
+                
+                #changing the 3rd item to grey, so it's apparent it isn't selectable
+                self.analysis_drop.setItemData(3, QColor(Qt.gray), Qt.TextColorRole)
+                #creating a tooltip the user can hover over, to understand why they can't select this option
+                tooltip = "The Fixed Alternan feature is only available for Voltage images."
+                self.analysis_drop.setItemData(3, tooltip, Qt.ToolTipRole)
+                
                 self.analysis_drop.setItemText(4, _translate("MainWindow",
                                                              "Dynamic Alternan"))
                 self.analysis_drop.setItemText(5, _translate("MainWindow",
@@ -511,8 +524,12 @@ class MainWindow(QWidget, Ui_MainWindow):
                 self.ensemble_cb_04.setEnabled(False)
                 self.start_time_label.setText(_translate("MainWindow", 
                                                          "Start Time: "))
+                self.start_time_label.setEnabled(True)
+                self.start_time_edit.setEnabled(True)
                 self.end_time_label.setText(_translate("MainWindow", 
                                                        "End Time: "))
+                self.end_time_label.setEnabled(True)
+                self.end_time_edit.setEnabled(True)
                 self.start_time_label2.hide()
                 self.start_time_edit2.hide()
                 self.start_time_edit2.setEnabled(False)
@@ -553,8 +570,12 @@ class MainWindow(QWidget, Ui_MainWindow):
                 self.ensemble_cb_04.setEnabled(False)
                 self.start_time_label.setText(_translate("MainWindow", 
                                                          "Start Time: "))
+                self.start_time_label.setEnabled(True)
+                self.start_time_edit.setEnabled(True)
                 self.end_time_label.setText(_translate("MainWindow", 
                                                        "End Time: "))
+                self.end_time_label.setEnabled(True)
+                self.end_time_edit.setEnabled(True)
                 self.start_time_label2.hide()
                 self.start_time_edit2.hide()
                 self.start_time_edit2.setEnabled(False)
@@ -593,6 +614,7 @@ class MainWindow(QWidget, Ui_MainWindow):
                 self.max_apd_edit.setText('')
                 self.max_val_label.setEnabled(True)
                 self.max_val_edit.setEnabled(True)
+                self.max_val_edit.setText(_translate("MainWindow", "0.7"))
                 if self.image_type_drop.currentIndex() == 0:
                     self.perc_apd_label_01.setText(
                         _translate("MainWindow", "<html><head/><body><p>%\
@@ -626,8 +648,12 @@ class MainWindow(QWidget, Ui_MainWindow):
                         checkbox.setEnabled(True)
                 self.start_time_label.setText(_translate("MainWindow", 
                                                          "Start Time: "))
+                self.start_time_label.setEnabled(True)
+                self.start_time_edit.setEnabled(True)
                 self.end_time_label.setText(_translate("MainWindow", 
                                                        "End Time: "))
+                self.end_time_label.setEnabled(True)
+                self.end_time_edit.setEnabled(True)
                 self.start_time_label2.hide()
                 self.start_time_edit2.hide()
                 self.start_time_edit2.setEnabled(False)
@@ -649,44 +675,97 @@ class MainWindow(QWidget, Ui_MainWindow):
             #setting the objects for Alternan mapping
             
             elif self.analysis_drop.currentIndex() == 3:
-                #show the label and text box for this function
-                self.start_time_edit2.show()
-                self.start_time_edit2.setEnabled(True)
-                self.start_time_label2.show()
-                self.end_time_edit2.show()
-                self.end_time_edit2.setEnabled(True)
-                self.end_time_label2.show()
-                self.start_time_label.setText(_translate("MainWindow", 
-                                                         "Alt. 1 Start Time: "))
-                self.end_time_label.setText(_translate("MainWindow", 
-                                                       "Alt. 1 End Time: "))
-                if self.image_type_drop.currentIndex() == 0:
+                if self.image_type_drop.currentIndex() == 0: 
+                    #show the label and text box for this function
+                    self.start_time_edit2.show()
+                    self.start_time_edit2.setEnabled(True)
+                    self.start_time_label2.show()
+                    self.start_time_label2.setEnabled(True)
+                    self.end_time_edit2.show()
+                    self.end_time_edit2.setEnabled(True)
+                    self.end_time_label2.show()
+                    self.end_time_label2.setEnabled(True)
+                    self.start_time_label.setText(_translate("MainWindow", 
+                                                             "Alt. 1 Start Time: "))
+                    self.end_time_label.setText(_translate("MainWindow", 
+                                                           "Alt. 1 End Time: "))
+
                     self.perc_apd_label_01.setText(
-                        _translate("MainWindow", "<html><head/><body><p>% \
-                                   APD<span style=\"vertical-align:sub;\">1\
-                                       span>:</p></body></html>"))
+                        _translate("MainWindow", "<html><head/><body><p>% APD<span \
+                                   style=\"vertical-align:sub;\">1</span>:</p></body>\
+                                       </html>"))
+
+                    self.perc_apd_label_01.setEnabled(True)
+                    self.perc_apd_edit_01.setEnabled(True)
+                    self.perc_apd_edit_01.setText('')
+                    
+                    self.max_val_label.setEnabled(False)
+                    self.max_val_edit.setEnabled(False)
+                    self.max_val_edit.setText('')
+                    
+                    self.max_apd_label.setEnabled(False)
+                    self.max_apd_edit.setEnabled(False)
+                    
+                    self.image_scale_label.setEnabled(False)
+                    self.image_scale_edit.setEnabled(False)
+                    self.image_scale_edit.setText('')
+                    self.single_cv.setEnabled(False)
+                    self.multi_cv.setEnabled(False)
+                    self.s_vector_no.setEnabled(False)
+                    self.s_vector_no.setText('')
+                    self.label_7.setEnabled(False)
+                    self.m_vector_no.setEnabled(False)
+                    self.label_9.setEnabled(False)
+                    self.multi_vector.setEnabled(False)
                 elif self.image_type_drop.currentIndex() == 1:
+                    #make all the funcionality disabled, so the user cannot run 
+                    #fixed alternan on calcium images
+                    self.start_time_edit2.show()
+                    self.start_time_edit2.setEnabled(False)
+                    self.start_time_label2.show()
+                    self.start_time_label2.setEnabled(False)
+                    self.end_time_edit2.show()
+                    self.end_time_edit2.setEnabled(False)
+                    self.end_time_label2.show()
+                    self.end_time_label2.setEnabled(False)
+                    self.start_time_label.setText(_translate("MainWindow", 
+                                                             "Alt. 1 Start Time: "))
+                    self.start_time_label.setEnabled(False)
+                    self.start_time_edit.setEnabled(False)
+                    self.end_time_label.setText(_translate("MainWindow", 
+                                                           "Alt. 1 End Time: "))
+                    self.end_time_label.setEnabled(False)
+                    self.end_time_edit.setEnabled(False)
                     self.perc_apd_label_01.setText(
-                        _translate("MainWindow", "<html><head/><body><p>% \
-                                   CaD<span style=\"vertical-align:sub;\">1\
-                                       </span>:</p></body></html>"))
-                self.perc_apd_label_01.setEnabled(True)
-                self.perc_apd_edit_01.setEnabled(True)
-                self.perc_apd_edit_01.setText('')
-                self.max_apd_label.setEnabled(False)
-                self.max_apd_edit.setEnabled(False)
-                
-                self.image_scale_label.setEnabled(False)
-                self.image_scale_edit.setEnabled(False)
-                self.image_scale_edit.setText('')
-                self.single_cv.setEnabled(False)
-                self.multi_cv.setEnabled(False)
-                self.s_vector_no.setEnabled(False)
-                self.s_vector_no.setText('')
-                self.label_7.setEnabled(False)
-                self.m_vector_no.setEnabled(False)
-                self.label_9.setEnabled(False)
-                self.multi_vector.setEnabled(False)
+                        _translate("MainWindow", "<html><head/><body><p>% APD<span \
+                                   style=\"vertical-align:sub;\">1</span>:</p></body>\
+                                       </html>"))
+
+                    self.perc_apd_label_01.setEnabled(False)
+                    self.perc_apd_edit_01.setEnabled(False)
+                    self.perc_apd_edit_01.setText('')
+                    self.perc_apd_label_02.setEnabled(False)
+                    self.perc_apd_edit_02.setEnabled(False)
+                    self.perc_apd_edit_02.setText('')
+                    
+                    self.max_val_label.setEnabled(False)
+                    self.max_val_edit.setEnabled(False)
+                    self.max_val_edit.setText('')
+                    
+                    self.max_apd_label.setEnabled(False)
+                    self.max_apd_edit.setEnabled(False)
+                    
+                    self.image_scale_label.setEnabled(False)
+                    self.image_scale_edit.setEnabled(False)
+                    self.image_scale_edit.setText('')
+                    self.single_cv.setEnabled(False)
+                    self.multi_cv.setEnabled(False)
+                    self.s_vector_no.setEnabled(False)
+                    self.s_vector_no.setText('')
+                    self.label_7.setEnabled(False)
+                    self.m_vector_no.setEnabled(False)
+                    self.label_9.setEnabled(False)
+                    self.multi_vector.setEnabled(False)
                 
             #setting the objects for dynamic and manual alternan mapping
             elif (self.analysis_drop.currentIndex() == 4 or 
@@ -710,8 +789,12 @@ class MainWindow(QWidget, Ui_MainWindow):
                 self.ensemble_cb_04.setEnabled(False)
                 self.start_time_label.setText(_translate("MainWindow", 
                                                          "Start Time: "))
+                self.start_time_label.setEnabled(True)
+                self.start_time_edit.setEnabled(True)
                 self.end_time_label.setText(_translate("MainWindow", 
                                                        "End Time: "))
+                self.end_time_label.setEnabled(True)
+                self.end_time_edit.setEnabled(True)
                 self.start_time_label2.hide()
                 self.start_time_edit2.hide()
                 self.start_time_edit2.setEnabled(False)
@@ -742,13 +825,19 @@ class MainWindow(QWidget, Ui_MainWindow):
                 self.start_time_edit2.show()
                 self.start_time_edit2.setEnabled(True)
                 self.start_time_label2.show()
+                self.start_time_label2.setEnabled(True)
                 self.end_time_edit2.show()
                 self.end_time_edit2.setEnabled(True)
                 self.end_time_label2.show()
+                self.end_time_label2.setEnabled(True)
                 self.start_time_label.setText(_translate("MainWindow", 
                                                          "Alt. 1 Start Time: "))
+                self.start_time_label.setEnabled(True)
+                self.start_time_edit.setEnabled(True)
                 self.end_time_label.setText(_translate("MainWindow", 
                                                        "Alt. 1 End Time: "))
+                self.end_time_label.setEnabled(True)
+                self.end_time_edit.setEnabled(True)
                 if self.image_type_drop.currentIndex() == 0:
                     self.perc_apd_label_01.setText(
                         _translate("MainWindow", "<html><head/><body><p>% \
@@ -766,7 +855,13 @@ class MainWindow(QWidget, Ui_MainWindow):
                 self.perc_apd_label_02.setEnabled(True)
                 self.perc_apd_edit_02.setEnabled(True)
                 self.perc_apd_edit_01.setText('')
-                self.perc_apd_edit_02.setText('4')    
+                self.perc_apd_edit_02.setText('4')   
+                
+                #creating an option for the threshold, but using the max amp text box
+                self.max_val_label.setEnabled(True)
+                self.max_val_edit.setEnabled(True)
+                self.max_val_edit.setText(_translate("MainWindow", "0.7"))
+                
                 self.max_apd_label.setEnabled(False)
                 self.max_apd_edit.setEnabled(False)
                 
@@ -813,8 +908,12 @@ class MainWindow(QWidget, Ui_MainWindow):
                 self.ensemble_cb_04.setEnabled(False) 
                 self.start_time_label.setText(_translate("MainWindow", 
                                                          "Start Time: ")) 
+                self.start_time_label.setEnabled(True)
+                self.start_time_edit.setEnabled(True)
                 self.end_time_label.setText(_translate("MainWindow", 
                                                        "End Time: ")) 
+                self.end_time_label.setEnabled(True)
+                self.end_time_edit.setEnabled(True)
                 self.start_time_label2.hide() 
                 self.start_time_edit2.hide() 
                 self.start_time_edit2.setEnabled(False) 
@@ -913,8 +1012,14 @@ class MainWindow(QWidget, Ui_MainWindow):
             self.start_time_label.setEnabled(False)
             self.start_time_edit.setEnabled(False)
             self.start_time_edit.setText('')
+            self.start_time_label2.setEnabled(False)
+            self.start_time_edit2.setEnabled(False)
+            self.start_time_edit.setText('')
             self.end_time_label.setEnabled(False)
             self.end_time_edit.setEnabled(False)
+            self.end_time_edit.setText('')
+            self.end_time_label2.setEnabled(False)
+            self.end_time_edit2.setEnabled(False)
             self.end_time_edit.setText('')
             self.map_pushbutton.setEnabled(False)
             self.max_apd_label.setEnabled(False)
@@ -922,6 +1027,7 @@ class MainWindow(QWidget, Ui_MainWindow):
             self.max_apd_edit.setText('')
             self.max_val_label.setEnabled(False)
             self.max_val_edit.setEnabled(False)
+            self.max_val_edit.setText('')
             self.perc_apd_label_01.setEnabled(False)
             self.perc_apd_edit_01.setEnabled(False)
             self.perc_apd_label_02.setEnabled(False)
@@ -1476,8 +1582,12 @@ class MainWindow(QWidget, Ui_MainWindow):
             self.ensemble_cb_04.setEnabled(False)
             self.start_time_label.setText(_translate("MainWindow", 
                                                      "Start Time: "))
+            self.start_time_label.setEnabled(True)
+            self.start_time_edit.setEnabled(True)
             self.end_time_label.setText(_translate("MainWindow", 
                                                    "End Time: "))
+            self.end_time_label.setEnabled(True)
+            self.end_time_edit.setEnabled(True)
             self.start_time_label2.hide()
             self.start_time_edit2.hide()
             self.start_time_edit2.setEnabled(False)
@@ -1518,8 +1628,12 @@ class MainWindow(QWidget, Ui_MainWindow):
             self.ensemble_cb_04.setEnabled(False)
             self.start_time_label.setText(_translate("MainWindow", 
                                                      "Start Time: "))
+            self.start_time_label.setEnabled(True)
+            self.start_time_edit.setEnabled(True)
             self.end_time_label.setText(_translate("MainWindow", 
                                                    "End Time: "))
+            self.end_time_label.setEnabled(True)
+            self.end_time_edit.setEnabled(True)
             self.start_time_label2.hide()
             self.start_time_edit2.hide()
             self.start_time_edit2.setEnabled(False)
@@ -1558,6 +1672,7 @@ class MainWindow(QWidget, Ui_MainWindow):
             self.max_apd_edit.setText('')
             self.max_val_label.setEnabled(True)
             self.max_val_edit.setEnabled(True)
+            self.max_val_edit.setText(_translate("MainWindow", "0.7"))
             if self.image_type_drop.currentIndex() == 0:
                 self.perc_apd_label_01.setText(
                     _translate("MainWindow", "<html><head/><body><p>% \
@@ -1591,8 +1706,12 @@ class MainWindow(QWidget, Ui_MainWindow):
                     checkbox.setEnabled(True)
             self.start_time_label.setText(_translate("MainWindow", 
                                                      "Start Time: "))
+            self.start_time_label.setEnabled(True)
+            self.start_time_edit.setEnabled(True)
             self.end_time_label.setText(_translate("MainWindow", 
                                                    "End Time: "))
+            self.end_time_label.setEnabled(True)
+            self.end_time_edit.setEnabled(True)
             self.start_time_label2.hide()
             self.start_time_edit2.hide()
             self.start_time_edit2.setEnabled(False)
@@ -1614,44 +1733,100 @@ class MainWindow(QWidget, Ui_MainWindow):
             
         #setting the objects for Alternan mapping
         elif self.analysis_drop.currentIndex() == 3:
-            #show the label and text box for this function
-            self.start_time_edit2.show()
-            self.start_time_edit2.setEnabled(True)
-            self.start_time_label2.show()
-            self.end_time_edit2.show()
-            self.end_time_edit2.setEnabled(True)
-            self.end_time_label2.show()
-            self.start_time_label.setText(_translate("MainWindow", 
-                                                     "Alt. 1 Start Time: "))
-            self.end_time_label.setText(_translate("MainWindow", 
-                                                   "Alt. 1 End Time: "))
-            if self.image_type_drop.currentIndex() == 0:
+            if self.image_type_drop.currentIndex() == 0: 
+                #show the label and text box for this function
+                self.start_time_edit2.show()
+                self.start_time_edit2.setEnabled(True)
+                self.start_time_label2.show()
+                self.start_time_label2.setEnabled(True)
+                self.end_time_edit2.show()
+                self.end_time_edit2.setEnabled(True)
+                self.end_time_label2.show()
+                self.end_time_label2.setEnabled(True)
+                self.start_time_label.setText(_translate("MainWindow", 
+                                                         "Alt. 1 Start Time: "))
+                self.end_time_label.setText(_translate("MainWindow", 
+                                                       "Alt. 1 End Time: "))
                 self.perc_apd_label_01.setText(
-                    _translate("MainWindow", "<html><head/><body><p>% \
-                               APD<span style=\"vertical-align:sub;\">1\
-                                   </span>:</p></body></html>"))
+                    _translate("MainWindow", "<html><head/><body><p>% APD<span \
+                               style=\"vertical-align:sub;\">1</span>:</p></body>\
+                                   </html>"))
+
+                self.perc_apd_label_01.setEnabled(True)
+                self.perc_apd_edit_01.setEnabled(True)
+                self.perc_apd_edit_01.setText('')
+                self.perc_apd_label_02.setEnabled(False)
+                self.perc_apd_edit_02.setEnabled(False)
+                self.perc_apd_edit_02.setText('')
+                
+                self.max_val_label.setEnabled(False)
+                self.max_val_edit.setEnabled(False)
+                self.max_val_edit.setText('')
+                
+                self.max_apd_label.setEnabled(False)
+                self.max_apd_edit.setEnabled(False)
+                
+                self.image_scale_label.setEnabled(False)
+                self.image_scale_edit.setEnabled(False)
+                self.image_scale_edit.setText('')
+                self.single_cv.setEnabled(False)
+                self.multi_cv.setEnabled(False)
+                self.s_vector_no.setEnabled(False)
+                self.s_vector_no.setText('')
+                self.label_7.setEnabled(False)
+                self.m_vector_no.setEnabled(False)
+                self.label_9.setEnabled(False)
+                self.multi_vector.setEnabled(False)
             elif self.image_type_drop.currentIndex() == 1:
+                #make all the funcionality disabled, so the user cannot run 
+                #fixed alternan on calcium images
+                self.start_time_edit2.show()
+                self.start_time_edit2.setEnabled(False)
+                self.start_time_label2.show()
+                self.start_time_label2.setEnabled(False)
+                self.end_time_edit2.show()
+                self.end_time_edit2.setEnabled(False)
+                self.end_time_label2.show()
+                self.end_time_label2.setEnabled(False)
+                self.start_time_label.setText(_translate("MainWindow", 
+                                                         "Alt. 1 Start Time: "))
+                self.start_time_label.setEnabled(False)
+                self.start_time_edit.setEnabled(False)
+                self.end_time_label.setText(_translate("MainWindow", 
+                                                       "Alt. 1 End Time: "))
+                self.end_time_label.setEnabled(False)
+                self.end_time_edit.setEnabled(False)
                 self.perc_apd_label_01.setText(
-                    _translate("MainWindow", "<html><head/><body><p>% \
-                               CaD<span style=\"vertical-align:sub;\">1\
-                                   </span>:</p></body></html>"))
-            self.perc_apd_label_01.setEnabled(True)
-            self.perc_apd_edit_01.setEnabled(True)
-            self.perc_apd_edit_01.setText('')
-            self.max_apd_label.setEnabled(False)
-            self.max_apd_edit.setEnabled(False)
-            
-            self.image_scale_label.setEnabled(False)
-            self.image_scale_edit.setEnabled(False)
-            self.image_scale_edit.setText('')
-            self.single_cv.setEnabled(False)
-            self.multi_cv.setEnabled(False)
-            self.s_vector_no.setEnabled(False)
-            self.s_vector_no.setText('')
-            self.label_7.setEnabled(False)
-            self.m_vector_no.setEnabled(False)
-            self.label_9.setEnabled(False)
-            self.multi_vector.setEnabled(False)
+                    _translate("MainWindow", "<html><head/><body><p>% APD<span \
+                               style=\"vertical-align:sub;\">1</span>:</p></body>\
+                                   </html>"))
+
+                self.perc_apd_label_01.setEnabled(False)
+                self.perc_apd_edit_01.setEnabled(False)
+                self.perc_apd_edit_01.setText('')
+                self.perc_apd_label_02.setEnabled(False)
+                self.perc_apd_edit_02.setEnabled(False)
+                self.perc_apd_edit_02.setText('')
+                
+                self.max_val_label.setEnabled(False)
+                self.max_val_edit.setEnabled(False)
+                self.max_val_edit.setText('')
+                
+                self.max_apd_label.setEnabled(False)
+                self.max_apd_edit.setEnabled(False)
+                
+                self.image_scale_label.setEnabled(False)
+                self.image_scale_edit.setEnabled(False)
+                self.image_scale_edit.setText('')
+                self.single_cv.setEnabled(False)
+                self.multi_cv.setEnabled(False)
+                self.s_vector_no.setEnabled(False)
+                self.s_vector_no.setText('')
+                self.label_7.setEnabled(False)
+                self.m_vector_no.setEnabled(False)
+                self.label_9.setEnabled(False)
+                self.multi_vector.setEnabled(False)
+                
             
         #setting the objects for dynamic and manual alternan mapping
         elif (self.analysis_drop.currentIndex() == 4 or 
@@ -1675,8 +1850,12 @@ class MainWindow(QWidget, Ui_MainWindow):
             self.ensemble_cb_04.setEnabled(False)
             self.start_time_label.setText(_translate("MainWindow", 
                                                      "Start Time: "))
+            self.start_time_label.setEnabled(True)
+            self.start_time_edit.setEnabled(True)
             self.end_time_label.setText(_translate("MainWindow", 
                                                    "End Time: "))
+            self.end_time_label.setEnabled(True)
+            self.end_time_edit.setEnabled(True)
             self.start_time_label2.hide()
             self.start_time_edit2.hide()
             self.start_time_edit2.setEnabled(False)
@@ -1707,13 +1886,19 @@ class MainWindow(QWidget, Ui_MainWindow):
             self.start_time_edit2.show()
             self.start_time_edit2.setEnabled(True)
             self.start_time_label2.show()
+            self.start_time_label2.setEnabled(True)
             self.end_time_edit2.show()
             self.end_time_edit2.setEnabled(True)
             self.end_time_label2.show()
+            self.end_time_label2.setEnabled(True)
             self.start_time_label.setText(_translate("MainWindow", 
                                                      "Alt. 1 Start Time: "))
+            self.start_time_label.setEnabled(True)
+            self.start_time_edit.setEnabled(True)
             self.end_time_label.setText(_translate("MainWindow", 
                                                    "Alt. 1 End Time: "))
+            self.end_time_label.setEnabled(True)
+            self.end_time_edit.setEnabled(True)
             if self.image_type_drop.currentIndex() == 0:
                 self.perc_apd_label_01.setText(
                     _translate("MainWindow", "<html><head/><body><p>% \
@@ -1732,6 +1917,12 @@ class MainWindow(QWidget, Ui_MainWindow):
             self.perc_apd_edit_02.setEnabled(True)
             self.perc_apd_edit_01.setText('')
             self.perc_apd_edit_02.setText('4')
+            
+            #creating an option for the threshold, but using the max amp text box
+            self.max_val_label.setEnabled(True)
+            self.max_val_edit.setEnabled(True)
+            self.max_val_edit.setText(_translate("MainWindow", "0.7"))
+            
             self.max_apd_label.setEnabled(False)
             self.max_apd_edit.setEnabled(False)
             self.image_scale_label.setEnabled(False)
@@ -1776,8 +1967,12 @@ class MainWindow(QWidget, Ui_MainWindow):
             self.ensemble_cb_04.setEnabled(False) 
             self.start_time_label.setText(_translate("MainWindow", 
                                                      "Start Time: ")) 
+            self.start_time_label.setEnabled(True)
+            self.start_time_edit.setEnabled(True)
             self.end_time_label.setText(_translate("MainWindow", 
                                                    "End Time: ")) 
+            self.end_time_label.setEnabled(True)
+            self.end_time_edit.setEnabled(True)
             self.start_time_label2.hide() 
             self.start_time_edit2.hide() 
             self.start_time_edit2.setEnabled(False) 
@@ -2067,13 +2262,14 @@ class MainWindow(QWidget, Ui_MainWindow):
             end_time = float(self.end_time_edit.text()) 
             peak_coeff = float(self.perc_apd_edit_02.text())
             apd_input = float(self.perc_apd_edit_01.text())/100
+            threshold= float(self.max_val_edit.text())
             
             imaging_analysis.S1_S2(self.data_fps, self.data_filt, 
                                              li1, li2, transp, start_ind, 
                                              end_ind, start_ind2, end_ind2, 
                                              interp_selection, apd_input, 
                                              self.image_type_drop.currentIndex(),
-                                             peak_coeff)   
+                                             peak_coeff, threshold)   
             
         # Calculate and visualize SNR
         if analysis_type == 7:
@@ -2411,13 +2607,14 @@ class MainWindow(QWidget, Ui_MainWindow):
             end_time = float(self.end_time_edit.text()) 
             peak_coeff = float(self.perc_apd_edit_02.text())
             apd_input = float(self.perc_apd_edit_01.text())/100
+            threshold = float(self.max_val_edit.text())
             
             imaging_analysis.S1_S2(self.data_fps, self.data_filt, 
                                              li1, li2, transp, start_ind, 
                                              end_ind, start_ind2, end_ind2, 
                                              interp_selection, apd_input, 
                                              self.image_type_drop.currentIndex(),
-                                             peak_coeff)       
+                                             peak_coeff, threshold)       
         # Calculate and visualize SNR
         if analysis_type == 7:
             # Calculate SNR
@@ -3180,7 +3377,7 @@ class MainWindow(QWidget, Ui_MainWindow):
                     # Y-axis value
                     y = float(self.max_val_edit.text())
                     # Overlay the frame location of the play feature
-                    canvas.axes.plot([x0, x1], [y, y], 'red')
+                    canvas.axes.plot([x0, x1], [y, y], 'green')
                     # Set the x-axis limits
                     canvas.axes.set_xlim(self.signal_time[start_i],
                                          self.signal_time[end_i-1])
