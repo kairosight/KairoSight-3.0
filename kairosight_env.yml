@@ -1,4 +1,4 @@
-name: kairosight_2-0
+name: kairosight_3-0
 channels:
   - defaults
 dependencies:
