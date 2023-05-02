@@ -170,4 +170,4 @@ dependencies:
     - scipy==1.4.1
     - seaborn==0.10.1
     - tifffile==2020.5.25
-prefix: C:\Users\cglos\anaconda3\envs\kairosight_2-0
+prefix: C:\Users\cglos\anaconda3\envs\kairosight_3-0
