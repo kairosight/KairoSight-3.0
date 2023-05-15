@@ -12,21 +12,22 @@ In order to get up and running with Kairosight 3.0 you will need to complete the
 5. Type 'cd ' and type the directory where you cloned/downloaded the repository (e.g., "OneDrive\Documents\GitHub\KairoSight-3.0-main")
    a. Note: you can copy the file path by finding the directory in your folders, right clicking, and pasting the file path into the anaconda prompt
 6. Press 'Enter' on your keyboard
-7. When Anaconda has finished installing the environment it should instruct you to run step 8
-8. Type 'conda activate kairosight_3.0'
-9. Press 'Enter' on your keyboard
-10. When anaconda has finished this step, close the 'Anaconda Prompt'
-11. Navigate to your computers search bar and type 'Anaconda Navigator'
-12. When the application finishes opening, navigate to the drop-down next to 'Application'
+7. Enter the following command: conda env create -f kairosight_env.yml
+8. When Anaconda has finished installing the environment it should instruct you to run step 9
+9. Type 'conda activate kairosight_3.0'
+10. Press 'Enter' on your keyboard
+11. When anaconda has finished this step, close the 'Anaconda Prompt'
+12. Navigate to your computers search bar and type 'Anaconda Navigator'
+13. When the application finishes opening, navigate to the drop-down next to 'Application'
    a. Note: the drop-down will most likely say 'base(root)'
-13. Switch the drop-down to 'kairosight_3-0'
-14. In the save 'Anaconda Navigator' window, find the "Spyder" application
-15. Launch the "Spyder" application
-16. In the top menu select: Tools -> Preferences
-17. Select "IPython Console" on the left hand menu
-18. Select the "Graphics" tab and make sure the 'Graphics backend' is set to Qt5
-19. Select "Apply" to save any changes, and select "OK" to close the window
-20. Navigate to: File -> Open -> 'location of KairoSight-3.0-main' -> src (inside your KairoSight-3.0-main folder) 
-21. Select the 'kairosight_retro.py' file
-22. When loaded in spyder, select the green play button (in the top menu)
-23. KairoSight should now be up and running
+14. Switch the drop-down to 'kairosight_3-0'
+15. In the save 'Anaconda Navigator' window, find the "Spyder" application
+16. Launch the "Spyder" application
+17. In the top menu select: Tools -> Preferences
+18. Select "IPython Console" on the left hand menu
+19. Select the "Graphics" tab and make sure the 'Graphics backend' is set to Qt5
+20. Select "Apply" to save any changes, and select "OK" to close the window
+21. Navigate to: File -> Open -> 'location of KairoSight-3.0-main' -> src (inside your KairoSight-3.0-main folder) 
+22. Select the 'kairosight_retro.py' file
+23. When loaded in spyder, select the green play button (in the top menu)
+24. KairoSight should now be up and running
