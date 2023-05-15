@@ -5,29 +5,32 @@ This project started as a python port of Camat (cardiac mapping analysis tool, P
  
 In order to get up and running with Kairosight 3.0 you will need to complete the following set up steps:
 1. First you will need to install Anaconda, which can be found [here](https://docs.anaconda.com/anaconda/install/windows/) or if you have an older operating system [here](https://docs.anaconda.com/free/anaconda/install/old-os/).
-2. Clone or download the repository (save the contents to a location that is easy to remember/navigate to).
-   a. Note: If you download the repository, unzip the contents of the zip file (your repository is the folder 'KairoSight-3.0-main')
-3. Navigate to your computers search bar and type "Anaconda Prompt"
-4. Select the Anaconda Prompt
-5. Type 'cd ' and type the directory where you cloned/downloaded the repository (e.g., "OneDrive\Documents\GitHub\KairoSight-3.0-main")
+2. Select "Just Me - Recommended" when prompted.
+3. Clone or download the repository (save the contents to a location that is easy to remember/navigate to).
+   a. To find, scroll to the top of this page > locate "Code" (in green) > select the drop-down > locate "Download ZIP" > select "Download ZIP"
+   b. Note: If you download the repository, unzip the contents of the zip file (your repository is the folder 'KairoSight-3.0-main')
+4. Navigate to your computers search bar and type "Anaconda Prompt"
+5. Select the Anaconda Prompt
+6. Type 'cd', press the space bar, and then type the directory where you cloned/downloaded the repository (e.g., "OneDrive\Documents\GitHub\KairoSight-3.0-main")
    a. Note: you can copy the file path by finding the directory in your folders, right clicking, and pasting the file path into the anaconda prompt
-6. Press 'Enter' on your keyboard
-7. Enter the following command: conda env create -f kairosight_env.yml
-8. When Anaconda has finished installing the environment it should instruct you to run step 9
-9. Type 'conda activate kairosight_3.0'
-10. Press 'Enter' on your keyboard
-11. When anaconda has finished this step, close the 'Anaconda Prompt'
-12. Navigate to your computers search bar and type 'Anaconda Navigator'
-13. When the application finishes opening, navigate to the drop-down next to 'Application'
+7. Press 'Enter' on your keyboard
+8. Enter the following command: conda env create -f kairosight_env.yml
+9. Press 'Enter' on your keyboard
+10. When Anaconda has finished installing the environment it should instruct you to run step 11
+11. Type 'conda activate kairosight_3.0'
+12. Press 'Enter' on your keyboard
+13. When anaconda has finished this step, close the 'Anaconda Prompt'
+14. Navigate to your computers search bar and type 'Anaconda Navigator'
+15. When the application finishes opening, navigate to the drop-down next to 'Application'
    a. Note: the drop-down will most likely say 'base(root)'
-14. Switch the drop-down to 'kairosight_3-0'
-15. In the save 'Anaconda Navigator' window, find the "Spyder" application
-16. Launch the "Spyder" application
-17. In the top menu select: Tools -> Preferences
-18. Select "IPython Console" on the left hand menu
-19. Select the "Graphics" tab and make sure the 'Graphics backend' is set to Qt5
-20. Select "Apply" to save any changes, and select "OK" to close the window
-21. Navigate to: File -> Open -> 'location of KairoSight-3.0-main' -> src (inside your KairoSight-3.0-main folder) 
-22. Select the 'kairosight_retro.py' file
-23. When loaded in spyder, select the green play button (in the top menu)
-24. KairoSight should now be up and running
+16. Switch the drop-down to 'kairosight_3-0'
+17. In the save 'Anaconda Navigator' window, find the "Spyder" application
+18. Launch the "Spyder" application
+19. In the top menu select: Tools -> Preferences
+20. Select "IPython Console" on the left hand menu
+21. Select the "Graphics" tab and make sure the 'Graphics backend' is set to Qt5
+22. Select "Apply" to save any changes, and select "OK" to close the window
+23. Navigate to: File -> Open -> 'location of KairoSight-3.0-main' -> src (inside your KairoSight-3.0-main folder) 
+24. Select the 'kairosight_retro.py' file
+25. When loaded in spyder, select the green play button (in the top menu)
+26. KairoSight should now be up and running
