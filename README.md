@@ -17,7 +17,7 @@ In order to get up and running with Kairosight 3.0 you will need to complete the
 8. Enter the following command: conda env create -f kairosight_env.yml
 9. Press 'Enter' on your keyboard
 10. When Anaconda has finished installing the environment it should instruct you to run step 11
-11. Type 'conda activate kairosight_3.0'
+11. Type 'conda activate kairosight_3-0'
 12. Press 'Enter' on your keyboard
 13. When anaconda has finished this step, close the 'Anaconda Prompt'
 14. Navigate to your computers search bar and type 'Anaconda Navigator'
