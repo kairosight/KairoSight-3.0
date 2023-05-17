@@ -24,7 +24,7 @@ In order to get up and running with Kairosight 3.0 you will need to complete the
 15. When the application finishes opening, navigate to the drop-down next to 'Application'
    a. Note: the drop-down will most likely say 'base(root)'
 16. Switch the drop-down to 'kairosight_3-0'
-17. In the save 'Anaconda Navigator' window, find the "Spyder" application
+17. In the 'Anaconda Navigator' window, find the "Spyder" application
 18. Launch the "Spyder" application
 19. In the top menu select: Tools -> Preferences
 20. Select "IPython Console" on the left hand menu
