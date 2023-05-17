@@ -5,7 +5,7 @@ This project started as a python port of Camat (cardiac mapping analysis tool, P
  
 In order to get up and running with Kairosight 3.0 you will need to complete the following set up steps:
 1. First you will need to install Anaconda, which can be found [here](https://docs.anaconda.com/anaconda/install/windows/) or if you have an older operating system [here](https://docs.anaconda.com/free/anaconda/install/old-os/).
-2. Select "Just Me - Recommended" when prompted.
+2. Select "Just Me (Recommended)" when prompted.
 3. Clone or download the repository (save the contents to a location that is easy to remember/navigate to).
    a. To find, scroll to the top of this page > locate "Code" (in green) > select the drop-down > locate "Download ZIP" > select "Download ZIP"
    b. Note: If you download the repository, unzip the contents of the zip file (your repository is the folder 'KairoSight-3.0-main')
