@@ -12,6 +12,7 @@ In order to get up and running with Kairosight 3.0 you will need to complete the
 4. Navigate to your computers search bar and type "Anaconda Prompt"
 5. Select the Anaconda Prompt
 6. Type 'cd', press the space bar, and then type the directory where you cloned/downloaded the repository (e.g., "OneDrive\Documents\GitHub\KairoSight-3.0-main")
+   ** Be sure to include the file name at the end of the directory file path **
    a. Note: you can copy the file path by finding the directory in your folders, right clicking, and pasting the file path into the anaconda prompt
 7. Press 'Enter' on your keyboard
 8. Enter the following command: conda env create -f kairosight_env.yml
