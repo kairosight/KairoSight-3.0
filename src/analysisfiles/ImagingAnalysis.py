@@ -6,6 +6,7 @@ Created on Thu Aug 25 11:07:44 2022
 """
 
 import copy
+import csv
 import cv2
 import matplotlib.cm as cm 
 import matplotlib.colors as colors
@@ -13,15 +14,18 @@ import matplotlib.pyplot as plt
 from numpy import amax, amin, inf, load, loadtxt, save, savetxt
 import numpy as np
 import os
+#import pandas as pd
 from PyQt5.QtWidgets import QFileDialog
+import tkinter
+from tkinter import messagebox
 from scipy.signal import find_peaks
-from util.analysis import calc_tran_activation, draw_mask
+from util.analysis import calc_tran_activation, draw_poly
 from util.processing import normalize
 
 
 class ImagingAnalysis: 
     def adjust_alternan(self, fps, img, li1, li2, transp, start_ind, end_ind, 
-                      interp_selection, peak_coeff):
+                      interp_selection, peak_coeff, file_id):
         #this is an apd map, the actual alternan map code needs to be called here
         imgff=normalize(img,start_ind,end_ind)
         midP = self.midpoint(imgff,peak_coeff)[0]
@@ -46,7 +50,7 @@ class ImagingAnalysis:
         
     def alternan_50(self, fps, img, li1, li2, transp, start_ind, end_ind, 
                 start_ind2, end_ind2, interp_selection, perc_apd, 
-                image_type):
+                image_type, file_id):
         
         if image_type == 0:
             mapp_trace1 = self.apd_analysis(fps, img, start_ind, end_ind, 
@@ -85,7 +89,7 @@ class ImagingAnalysis:
     
     #creating a function to analyze the apd80 of a trace
     def apd_analysis(self, fps, img, start_ind, end_ind, interp_selection, 
-                    perc_apd): 
+                    perc_apd, file_id): 
         #editing the image to use only the start and end tiff points
         imgf=copy.deepcopy(img)
         imgf=normalize(imgf,start_ind,end_ind)
@@ -177,16 +181,16 @@ class ImagingAnalysis:
         mapp=((1000/fps)/interp_selection)*mapp
         
         #making a folder if there isn't a "Saved Data Maps" folder
-        if not os.path.exists("Saved Data Maps"):
-               os.makedirs("Saved Data Maps")
+        if not os.path.exists("Saved Data Maps\\" + file_id):
+               os.makedirs("Saved Data Maps\\" + file_id)
                
         #saving the data file
-        savetxt('Saved Data Maps/apd'+str(perc_apd*100)+'.csv', mapp2, 
-                delimiter=',')
+        savetxt('Saved Data Maps\\' + file_id + '\\apd'+str(perc_apd*100)+'.csv', 
+                mapp2, delimiter=',')
         
         return mapp2,mapp
  
-    def ec_coupling_map_act(self,li1, li2, transp, start,end,interp):
+    def ec_coupling_map_act(self,li1, li2, transp, start, end, interp, file_id):
         volt=load('filtered_voltage_image.npy')
         cal=load('filtered_calcium_image.npy')
          
@@ -196,16 +200,16 @@ class ImagingAnalysis:
         self.imaging_mapping(act_delay_map, li1, li2, transp)
         
         #making a folder if there isn't a "Saved Data Maps" folder
-        if not os.path.exists("Saved Data Maps"):
-               os.makedirs("Saved Data Maps")
+        if not os.path.exists("Saved Data Maps\\" + file_id):
+               os.makedirs("Saved Data Maps\\" + file_id)
                
         #saving the data file
-        savetxt('Saved Data Maps/activation_ACC.csv', act_delay_map, 
-                delimiter=',')
+        savetxt('Saved Data Maps\\' + file_id + '\\activation_ACC.csv', 
+                act_delay_map, delimiter=',')
 
  
     def ec_coupling_map_rep(self,fps,li1, li2, transp, start, end, 
-                            apd_perc,interp):
+                            apd_perc, interp, file_id):
         volt=load('filtered_voltage_image.npy')
         cal=load('filtered_calcium_image.npy')
        
@@ -215,12 +219,12 @@ class ImagingAnalysis:
         self.imaging_mapping(ap_ca_latency, li1, li2, transp) 
         
         #making a folder if there isn't a "Saved Data Maps" folder
-        if not os.path.exists("Saved Data Maps"):
-               os.makedirs("Saved Data Maps")
+        if not os.path.exists("Saved Data Maps\\" + file_id):
+               os.makedirs("Saved Data Maps\\" + file_id)
                
         #saving the data file
-        savetxt('Saved Data Maps/Repolarization_ACC'+ str(apd_perc*100)+'.csv', 
-                ap_ca_latency, delimiter=',')  
+        savetxt('Saved Data Maps\\' + file_id + '\\Repolarization_ACC'+ 
+                str(apd_perc*100)+'.csv', ap_ca_latency, delimiter=',')  
 
     def ec_coupling_save(self, data_filt, image_drop):
         #creating a placeholder for the EC function for now
@@ -293,6 +297,130 @@ class ImagingAnalysis:
                                            cmap ='jet'),
                          cax = plt.axes([0.87, 0.1, 0.05, 0.8]), 
                          format='%.3f')
+            
+    #creating a function to generate and excel doc with the means of the post analysis
+    def mean_post_analysis(self, file_id):
+        #assigning the working directory to a variable
+        directory = os.getcwd()
+        
+        #adding the Saved Data Maps to the working directory path
+        ROI_analysis_folder = str(directory) + '\\ROI Analysis\\' + file_id
+        
+        #checking if a ROI folder exists, if not tell the user to use
+        #region of interest analysis first
+        if not os.path.exists(ROI_analysis_folder):
+            window = tkinter.Tk()
+            window.wm_withdraw()
+            message = ("""\nThe 'Region of Interest Analysis' tool must be used before the 'Individual ROI Results' tool can be used. 
+                  \n1. Select Region of Interest Analysis to analyze generated maps.
+                  \n2. Then reselect Individual ROI Results.""")
+            messagebox.showinfo(title="Warning", message=message)
+        #if the ROI folder exists, continue
+        else:
+            rowcount = 0
+            for row in open("ROI Analysis\\" + file_id + '\\all_results.csv'):
+                rowcount += 1
+    
+            all_results = loadtxt("ROI Analysis\\" + file_id + '\\all_results.csv',  dtype='str', delimiter=',')
+            
+            #creating a variable so we can save the inputed number of regions
+            region_number = tkinter.Tk()
+            #closing the weird tkinter window that pops up
+            region_number.wm_withdraw()
+            
+            #creating a dialogue box so the user can select the number of regions
+            result_option = tkinter.simpledialog.askstring(
+                'Result Option', 
+                """\nType the result you want to save and select 'OK'.
+                \n For Mean - type: mean
+                \n For Median - type: median
+                \n For SD - type: sd
+                \n For N - type: n""", 
+                parent = region_number)
+            #pre-emptively removing spaces, in case the user types them
+            result_option = result_option.replace(' ', '')
+            
+            #making sure the user didn't enter an invalid value
+            if (result_option.lower() != 'mean' and result_option.lower() != 'median' and 
+                result_option.lower() != 'sd' and result_option.lower() != 'n'):
+                    window = tkinter.Tk()
+                    window.wm_withdraw()
+                    message = ("""\nAn invalid Result Option was selected.
+                               \nPlease Reselect Individual ROI Results and enter 
+                               a valid result option.""")
+                    messagebox.showinfo(title="Warning", message=message)
+                    
+            #if a valid value was entered, continue with the organization
+            else:
+                #checking if the file path exists, if it does there is already a header
+                #if it does not exist, a header hasn't been added yet
+                if not os.path.exists("ROI Analysis\\" + file_id + "\\" + 
+                                  result_option.lower() + "_individual_results.csv"):
+                    header_exists = False
+                else:
+                    header_exists = True
+                    
+                with open("ROI Analysis\\" + file_id + "\\" + 
+                          result_option.lower() + "_individual_results.csv", 'a') as file:                 
+                    
+                    #if there is no header add one, otherwise don't do anything
+                    if header_exists == False:
+                        header = ("Data File Name and Type,Region 1,Region 2,Region 3," +
+                                  "Region 4,Region 5,Region 6,Region 7,Region 8," +
+                                  "Region 9,Region 10")
+                        
+                        file.write(header + "\n")
+                        file.close
+                    else:
+                        file.close
+                        
+                    file = open("ROI Analysis\\" + file_id + "\\" + 
+                                result_option.lower() + "_individual_results.csv", 'a')
+                    
+                    i = 0
+                    #stepping through all the rows in the csv to organize that data
+                    while i < rowcount:
+                        #checking if the row is a header and not with data
+                        if all_results[i, 1] == 'mean':
+                            #save the name to the file variable
+                            data_file_name = all_results[i,0]
+                            data_file_name = data_file_name.replace('_region', '')
+                            
+                            data = []
+                            data.append(data_file_name)
+                            
+                            i += 1
+                            #search the rest of the rows until a row with headers
+                            #is reached or all the rows in the csv have been stepped
+                            #through
+                            while i < rowcount and all_results[i,1] != 'mean':
+                                #getting the current region numbr
+                                region_number = int(float(all_results[i,0]))
+                                #if the value of the region number does not equal
+                                #the length of the data array, then the user has 
+                                #inputed specific region numbers and skipped the 
+                                #current i region. So we want to skip that value 
+                                #and just make it blank. 
+                                if region_number != (len(data)):
+                                    while len(data) < region_number:
+                                        data.append(' ')
+                                #then we can continue adding the value from the 
+                                #region the user wants
+                                if result_option.lower() == 'mean':
+                                    data.append(all_results[i, 1])
+                                elif result_option.lower() == 'median':
+                                    data.append(all_results[i, 2])
+                                elif result_option.lower() == 'sd':
+                                    data.append(all_results[i, 3])
+                                elif result_option.lower() == 'n':
+                                    data.append(all_results[i, 4])
+                                i += 1
+                            
+                            #creating a file object
+                            writer = csv.writer(file)
+                            #writing to the existing object (file)
+                            writer.writerow(data)
+                file.close()
     
     def midpoint(self,imgff,peak_coeff):
            aa=np.shape(imgff)
@@ -335,7 +463,7 @@ class ImagingAnalysis:
            return midP,midP_idx,peak1, peak2   
     
     def moving_alternan(self, fps, img, li1, li2, transp, start_ind, end_ind, 
-                        image_type, peak_coeff):      
+                        image_type, peak_coeff, file_id):      
         if image_type == 0:
            
            imgff=copy.deepcopy(img)
@@ -439,11 +567,12 @@ class ImagingAnalysis:
            self.imaging_mapping(ap_coeff, li1, li2, transp)
            
            #making a folder if there isn't a "Saved Data Maps" folder
-           if not os.path.exists("Saved Data Maps"):
-               os.makedirs("Saved Data Maps")
+           if not os.path.exists("Saved Data Maps\\" + file_id):
+               os.makedirs("Saved Data Maps\\" + file_id)
             
            #saving the data file           
-           savetxt('Saved Data Maps/dynamic_AAC.csv', ap_coeff, delimiter=',')
+           savetxt('Saved Data Maps\\' + file_id + '\\dynamic_AAC.csv', 
+                   ap_coeff, delimiter=',')
            
         if image_type == 1:
             imgff=copy.deepcopy(img)
@@ -472,61 +601,249 @@ class ImagingAnalysis:
             self.imaging_mapping(ca_alt_coeff, li1, li2, transp)
             
             #making a folder if there isn't a "Saved Data Maps" folder
-            if not os.path.exists("Saved Data Maps"):
-               os.makedirs("Saved Data Maps")
+            if not os.path.exists("Saved Data Maps\\" + file_id):
+               os.makedirs("Saved Data Maps\\" + file_id)
                
             #saving the data file
-            savetxt('Saved Data Maps/dynamic_CAC.csv', ca_alt_coeff, 
-                    delimiter=',')
-            
-    def post_analysis(self):
-        #assinging the working directory to a variable
+            savetxt('Saved Data Maps\\' + file_id + '\\dynamic_CAC.csv', 
+                    ca_alt_coeff, delimiter=',')
+       
+        
+    def post_analysis(self, li1, li2, file_id, file_loaded):          
+        #assigning the working directory to a variable
         directory = os.getcwd()
-
+        
         #adding the Saved Data Maps to the working directory path
-        post_mapping_analysis_folder = str(directory) + '\Saved Data Maps'
+        post_mapping_analysis_folder = str(directory) + '\Saved Data Maps\\' + file_id
+        
+        #checking if the saved data maps folder exists, if it doesn't the snr 
+        #file also doesn't
+        if not os.path.exists(post_mapping_analysis_folder):
+            snr_file = 0
+        else:
+            #searching the Saved Data Maps folder for files named 'snr'
+            for root, dirs, files in os.walk(post_mapping_analysis_folder):
+                if 'snr.csv' in files:
+                    snr_file = 1
+                else:
+                    snr_file = 0 
+        
         #opening the Saved Data Maps file so the user can select a document
-        data_file_path = QFileDialog.getOpenFileName(None, "Open File", 
-                                               post_mapping_analysis_folder)
-        #grabbing the file path, the second object [0] is just the file type
-        #and not a part of the file path string
-        data_ori= loadtxt(data_file_path[0], delimiter=',')
-        #plotting the selected files image
-        plt.figure()
-        plt.imshow(data_ori)           
-        plt.colorbar()
-        duplicate=copy.deepcopy(data_ori)
-        print("""\nType would you like to append to the file name and press enter. 
-              \nIf no name is desired, press enter.""")
-        path_appendage = str(input())
-        print("\nList the number of regions do you want to draw and press enter:")
-        x = int(input())
-        
-        for i in range(x):
-            dd=draw_mask(data_ori)
-            tt=dd.astype(int)
-            img_mod = cv2.fillPoly(duplicate, pts= [tt], color = (-10000, 0, 0))
-        
-            mask_area=np.argwhere(img_mod<-1000)
-        
-            data=data_ori[mask_area[:,0],mask_area[:,1]]
+        if snr_file == 1:
+            file_path = post_mapping_analysis_folder + '\\snr.csv'
+            data_ori = loadtxt(file_path, delimiter=',')
+            data_ori[np.isnan(data_ori)] = 0
             
-            #making a folder if there isn't a "Saved Data Maps" folder
-            if not os.path.exists("Post Mapping Analysis"):
-               os.makedirs("Post Mapping Analysis")
-           
-            savetxt('Post Mapping Analysis/data_'+str(i+1)+"_"+path_appendage+'.csv',
-                    data, 
-                    delimiter=',')
-            mean = str(round(np.mean(data), 2))
-            median = str(round(np.median(data), 2))
+            regional_maps_folder = str(directory) + '\\Saved Region Maps\\' + file_id
             
-            print("\nFrom the "+str(i+1)+" region:\n\nMean:"+mean+"\nMedian:"+
-                  median)
+            #checking if a region folder exists, if not make one
+            if not os.path.exists(regional_maps_folder):
+                os.makedirs(regional_maps_folder)
+            
+            #checking if a region file has been created
+            region_files = os.path.isfile(regional_maps_folder + '\\region_1.csv')
+            
+            #if there are any saved region files in the current file_id folder do:
+            if region_files == True:
+                region_file_list = os.listdir(regional_maps_folder)
+                region_file_length = len(region_file_list)
+                
+                window = tkinter.Tk()
+                window.wm_withdraw()
+                message = ("""\nDo you want to use the """ + str(region_file_length) + " saved region selection(s)?")
+                use_region = messagebox.askquestion(title="Reuse Region Selection", 
+                                                    message=message)
+                
+                if use_region == 'no':
+                    #creating a variable so we can save the inputed number of regions
+                    region_number = tkinter.Tk()
+                    #closing the weird tkinter window that pops up
+                    region_number.wm_withdraw()
+                    
+                    #creating a dialogue box so the user can select the number of regions
+                    region_value = tkinter.simpledialog.askstring(
+                        'Region Number', 
+                        """\nList the number of regions do you want to draw and select 'OK'.""", 
+                        parent = region_number)
+                    
+                    #getting the region number and converting it from string to integers
+                    x = int(region_value)
+
+                    for j in range (x):
+                        mask_ar=[]
+                        img_mod=[]
+                        tt=[]
+                        dd=[]
+                        duplicate=copy.deepcopy(data_ori)
+                        dd=draw_poly(data_ori,li1,li2)
+                        tt=dd.astype(int)
+                        img_mod = cv2.fillPoly(duplicate, pts= [tt], color = (-10000, 0, 0))
+                        mask_ar=np.argwhere(img_mod<-2000)
+                       
+                        savetxt('Saved Region Maps\\' + file_id + '\\region_'+str(j+1)+'.csv', 
+                                mask_ar, delimiter=',')
+                        
+                #if the user wants to use the saved regions, let them decide how many
+                #and which ones
+                else:
+                    #creating a variable so we can save the desired number of regions
+                    region_number = tkinter.Tk()
+                    #closing the weird tkinter window that pops up
+                    region_number.wm_withdraw()
+                    
+                    #creating a dialogue box so the user can select the number of regions
+                    region_value = tkinter.simpledialog.askstring(
+                        'Region Number', 
+                        """\nList which of the """ + str(region_file_length) + 
+                        """ saved regions you want to use and select 'OK'.
+                        \nInput example: 1,3,4""", 
+                        parent = region_number)
+                    
+                    #x = int(region_value)
+                    region_value_string = region_value.split(',')
+                    x = [int(value) for value in region_value_string]
+                    
+            #if there are no saved regions, prompt the user to create them
+            else:
+                #creating a variable so we can save the inputed number of regions
+                region_number = tkinter.Tk()
+                #closing the weird tkinter window that pops up
+                region_number.wm_withdraw()
+                
+                #creating a dialogue box so the user can select the number of regions
+                region_value = tkinter.simpledialog.askstring(
+                    'Region Number', 
+                    """\nList the number of regions do you want to draw and select 'OK'.""", 
+                    parent = region_number)
+                
+                #getting the region number and converting it from string to integers
+                x = int(region_value)
+                
+                for j in range (x):
+                    mask_ar=[]
+                    img_mod=[]
+                    tt=[]
+                    dd=[]
+                    duplicate=copy.deepcopy(data_ori)
+                    dd=draw_poly(data_ori,li1,li2)
+                    tt=dd.astype(int)
+                    img_mod = cv2.fillPoly(duplicate, pts= [tt], color = (-10000, 0, 0))
+                    mask_ar=np.argwhere(img_mod<-2000)
+                    
+                    savetxt('Saved Region Maps\\' + file_id +'\\region_'+str(j+1)+'.csv', 
+                            mask_ar, delimiter=',')
+                    
+            #opening the file path that contains the files the user will want analyzed
+            data_file_path = QFileDialog.getOpenFileName(
+                None, "Open File", post_mapping_analysis_folder)
+            
+            #grabbing the file path, the second object [0] is just the file type
+            #and not a part of the file path string
+            data_ori= loadtxt(data_file_path[0], delimiter=',')
+            
+            selected_file_info = str(data_file_path)
+            #splitting the file info into an array by the ,
+            selected_file_info_obj = selected_file_info.split(',')
+            #getting the selected file path
+            selected_file_path = selected_file_info_obj[0]
+            #splitting the file path into an array by the /
+            selected_file_path_obj = selected_file_path.split('/')
+            #getting the length of this object
+            length = len(selected_file_path_obj)
+            #grabbing the last object of the array, should be the file name the 
+            #user selected
+            full_file_name = selected_file_path_obj[length-1]
+            
+            file_name_not_type = full_file_name.replace('.csv', '')
+            file_name = file_name_not_type.replace('"', '')
+            
+            loaded_file_path = file_loaded.split('.')
+            loaded_file = loaded_file_path[0]
+            
+            header = loaded_file + '_' + file_name + "_region,mean,median,sd,n"
+            
+            if not os.path.exists("ROI Analysis\\" + file_id):
+                os.makedirs("ROI Analysis\\" + file_id)
+
+            with open("ROI Analysis\\" + file_id + '\\all_results.csv', 'a') as file:
+                file.write(header + "\n")
+                file.close
+                file=open("ROI Analysis\\" + file_id + '\\all_results.csv','a')
+                
+                #creating a variable so we can save the inputed file name
+                filename = tkinter.Tk()
+                #closing the weird tkinter window that pops up
+                filename.wm_withdraw()
+                
+                #creating a dialogue box so the user can create a file name
+                file_appendage = tkinter.simpledialog.askstring(
+                    'File Name', 
+                    """\nType would you like to append to the file name and press enter. 
+                       \nIf no name is desired, press enter.""", parent = filename)
+               
+                #if the user enters a file name append it to the file
+                if file_appendage:
+                    path_appendage = file_appendage
+                #if the user does not enter a file name don't append any value
+                else:
+                    path_appendage = ''
+                
+                if not os.path.exists("ROI Analysis\\" + file_id + "\\" + file_name):
+                    os.makedirs("ROI Analysis\\" + file_id + "\\" + file_name)
+                
+                #if the user wants specific regions, use their input to 
+                #indicate what regions to use
+                if type(x) == list:
+                    x_length = len(x)
+                    for i in range(x_length):
+                        data=[]
+                        mask_area=loadtxt('Saved Region Maps\\' + file_id +
+                                          '\\region_'+str(x[i])+'.csv',delimiter=',')
+                        mask_area=mask_area.astype(int)
+                        data=data_ori[mask_area[:,0],mask_area[:,1]]
+                       
+                        savetxt('ROI Analysis\\' + file_id + '\\' +
+                                file_name + "\\" + file_name + '_R' + str(x[i]) + 
+                                '_' + path_appendage + 
+                                '.csv', data, delimiter=',')
+                        mean=round(np.mean(data),1)
+                        median=round(np.median(data),1)
+                        stdv=round(np.std(data),1)
+                        n=np.size(data)
+                        print(mean,median,stdv,n)
+                        savetxt(file, np.c_[x[i],mean,median,stdv,n],fmt='%.1f', delimiter=',')
+                #if the user doesn't want specific regions, continue with how many they want
+                else:
+                    for i in range(x):
+                        data=[]
+                        mask_area=loadtxt('Saved Region Maps\\' + file_id +
+                                          '\\region_'+str(i+1)+'.csv',delimiter=',')
+                        mask_area=mask_area.astype(int)
+                        data=data_ori[mask_area[:,0],mask_area[:,1]]
+                       
+                        savetxt('ROI Analysis\\' + file_id + '\\' +
+                                file_name + "\\" + file_name + '_R' + str(i+1) + 
+                                '_' + path_appendage + 
+                                '.csv', data, delimiter=',')
+                        mean=round(np.mean(data),1)
+                        median=round(np.median(data),1)
+                        stdv=round(np.std(data),1)
+                        n=np.size(data)
+                        print(mean,median,stdv,n)
+                        savetxt(file, np.c_[i+1,mean,median,stdv,n],fmt='%.1f', delimiter=',')
+            file.close()
+            
+        else:
+            window = tkinter.Tk()
+            window.wm_withdraw()
+            message = ("""\nAn SNR file is needed to use Region of Interest Analysis.
+                  \n1. Select SNR under the 'Analysis' section and generate a map.
+                  \n2. Then reselect Post Mapping Analysis.""")
+            messagebox.showinfo(title="Warning", message=message)
         
     def S1_S2(self, fps, img, li1, li2, transp, start_ind, end_ind, 
                     start_ind2, end_ind2, interp_selection, perc_apd, 
-                    image_type, peak_coeff, threshold):
+                    image_type, peak_coeff, threshold, file_id):
       
         apd1= self.apd_analysis(fps, img, start_ind, end_ind, 
                                 interp_selection, perc_apd)[0]
@@ -654,13 +971,13 @@ class ImagingAnalysis:
         self.imaging_mapping(amp_coeff, li1, li2, transp)
         
         #making a folder if there isn't a "Saved Data Maps" folder
-        if not os.path.exists("Saved Data Maps"):
-           os.makedirs("Saved Data Maps")
+        if not os.path.exists("Saved Data Maps\\" + file_id):
+           os.makedirs("Saved Data Maps\\" + file_id)
                
         #saving data file
-        savetxt('Saved Data Maps/S2'+str(perc_apd*100)+'.csv', apd2, 
+        savetxt('Saved Data Map\\' + file_id + '\\S2'+str(perc_apd*100)+'.csv', apd2, 
                 delimiter=',')  
-        savetxt('Saved Data Maps/S1S2_difference'+str(perc_apd*100)+'.csv', 
+        savetxt('Saved Data Maps\\' + file_id + '\\S1S2_difference'+str(perc_apd*100)+'.csv', 
                 diff, delimiter=',') 
-        savetxt('Saved Data Maps/S1S2_amp_coeff'+str(perc_apd*100)+'.csv', 
+        savetxt('Saved Data Maps\\' + file_id + '\\S1S2_amp_coeff'+str(perc_apd*100)+'.csv', 
                 amp_coeff, delimiter=',') 
