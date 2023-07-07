@@ -72,6 +72,15 @@ def draw_mask(file):
               plt.show() 
               
               return pts2
+          
+def draw_poly(file,lim1,lim2):
+              plt.imshow(file,vmin=lim1,vmax=lim2)
+              plt.set_cmap('jet') 
+              pts2 = np.asarray(plt.ginput(-1, timeout=-1, show_clicks=True))
+              plt.plot(pts2[:,0],pts2[:,1],'-o')
+              plt.show() 
+              
+              return pts2
 
 def cond_vel(file2,no_pt):
             plt.imshow(file2)
