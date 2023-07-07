@@ -54,10 +54,10 @@ class ImagingAnalysis:
         
         if image_type == 0:
             mapp_trace1 = self.apd_analysis(fps, img, start_ind, end_ind, 
-                                     interp_selection, perc_apd)[0]
+                                     interp_selection, perc_apd, file_id)[0]
             save('apd50_alt_1', mapp_trace1)
             mapp_trace2 = self.apd_analysis(fps, img, start_ind2, end_ind2, 
-                                     interp_selection, perc_apd)[0]
+                                     interp_selection, perc_apd, file_id)[0]
             save('apd50_alt_2', mapp_trace2)
         elif image_type == 1:
             mapp_trace1 = self.amplitude_analysis()
@@ -71,7 +71,6 @@ class ImagingAnalysis:
         alternan_coefficient = numerator/denominator
         #plotting the alternan coefficients
         self.imaging_mapping(alternan_coefficient*100, li1, li2, transp)
-        print(alternan_coefficient*100)
         
         #making a folder if there isn't a "Saved Data Maps" folder
         if not os.path.exists("Saved Data Maps"):
@@ -213,8 +212,8 @@ class ImagingAnalysis:
         volt=load('filtered_voltage_image.npy')
         cal=load('filtered_calcium_image.npy')
        
-        apd= self.apd_analysis(fps, volt, start, end, interp,apd_perc)[0]     
-        cad= self.apd_analysis(fps, cal, start, end, interp,apd_perc)[0] 
+        apd= self.apd_analysis(fps, volt, start, end, interp, apd_perc, file_id)[0]     
+        cad= self.apd_analysis(fps, cal, start, end, interp, apd_perc, file_id)[0] 
         ap_ca_latency=cad-apd
         self.imaging_mapping(ap_ca_latency, li1, li2, transp) 
         
