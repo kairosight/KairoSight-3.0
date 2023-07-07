@@ -846,7 +846,7 @@ class ImagingAnalysis:
                     image_type, peak_coeff, threshold, file_id):
       
         apd1= self.apd_analysis(fps, img, start_ind, end_ind, 
-                                interp_selection, perc_apd)[0]
+                                interp_selection, perc_apd, file_id)[0]
         
         imgf=copy.deepcopy(img)
 
@@ -975,7 +975,7 @@ class ImagingAnalysis:
            os.makedirs("Saved Data Maps\\" + file_id)
                
         #saving data file
-        savetxt('Saved Data Map\\' + file_id + '\\S2'+str(perc_apd*100)+'.csv', apd2, 
+        savetxt('Saved Data Maps\\' + file_id + '\\S2'+str(perc_apd*100)+'.csv', apd2, 
                 delimiter=',')  
         savetxt('Saved Data Maps\\' + file_id + '\\S1S2_difference'+str(perc_apd*100)+'.csv', 
                 diff, delimiter=',') 
