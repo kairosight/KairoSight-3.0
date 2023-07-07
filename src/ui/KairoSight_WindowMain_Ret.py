@@ -986,10 +986,16 @@ class Ui_MainWindow(object):
         
         #setting up the location and button for the post mapping analysis feature
         self.post_mapping_analysis = QtWidgets.QPushButton(self.centralwidget)
-        self.post_mapping_analysis.setGeometry(QtCore.QRect(460, 790, 121, 21))
+        self.post_mapping_analysis.setGeometry(QtCore.QRect(460, 790, 141, 21))
         self.post_mapping_analysis.setObjectName("post_mapping_analysis")
         self.post_mapping_analysis.setEnabled(False)
-        
+                
+        #setting up the location and button for the mean post mapping analysis feature
+        self.mean_post_mapping_analysis = QtWidgets.QPushButton(self.centralwidget)
+        self.mean_post_mapping_analysis.setGeometry(QtCore.QRect(460, 820, 121, 21))
+        self.mean_post_mapping_analysis.setObjectName("individual_post_mapping_analysis")
+        self.mean_post_mapping_analysis.setEnabled(False)
+
         #setting up the location and buttons for the masking features
         self.mask_widget = QtWidgets.QWidget(self.centralwidget)
         self.mask_widget.setGeometry(QtCore.QRect(11, 720, 210, 80))
@@ -1158,7 +1164,8 @@ class Ui_MainWindow(object):
                                                     "Modify Colorbar"))
         
         self.post_mapping_analysis.setText(_translate("MainWindow", 
-                                                      "Post Mapping Analysis"))
+                                                      "Region of Interest Analysis"))
+        self.mean_post_mapping_analysis.setText(_translate("MainWindow", "Individual ROI Results"))
         
         #setting text for masking buttons
         self.mask_draw.setText(_translate("MainWindow", "Draw Mask Area"))
