@@ -141,6 +141,7 @@ class MainWindow(QWidget, Ui_MainWindow):
         self.crop_yupper_edit.editingFinished.connect(self.crop_update)
         self.colorbar_map_update.clicked.connect(self.map_analysis_cbar)
         self.post_mapping_analysis.clicked.connect(self.post_mapping_data_analysis)
+        self.mean_post_mapping_analysis.clicked.connect(self.mean_post_mapping_data_analysis)
         self.mask_draw.clicked.connect(self.draw_mask_area)
         self.mask_use.clicked.connect(self.use_saved_mask_area)
         self.mask_reset.clicked.connect(self.refresh_mask_area)
@@ -171,6 +172,8 @@ class MainWindow(QWidget, Ui_MainWindow):
             self, "Open Directory", os.getcwd(), QFileDialog.ShowDirsOnly)
         # Update list widget with the contents of the selected directory
         self.refresh_data()
+        self.mean_post_mapping_analysis.setEnabled(False)
+        
 
     def load_data(self):
         # Grab the selected items name
@@ -2071,13 +2074,23 @@ class MainWindow(QWidget, Ui_MainWindow):
                         cmap='jet'),
                     cax=cax, format='%.3f')
                 
+                #getting the file path the user selected
+                file_path = str(self.file_path)
+                #splitting the file path into an array by the /
+                file_path_obj = file_path.split('/')
+                #getting the length of this object
+                length = len(file_path_obj)
+                #grabbing the last object of the array, should be the file name the 
+                #user selected
+                file_id = file_path_obj[length-1]
+                
                 #making a folder if there isn't a "Saved Data Maps" folder
-                if not os.path.exists("Saved Data Maps"):
-                   os.makedirs("Saved Data Maps")
+                if not os.path.exists("Saved Data Maps\\" + file_id):
+                   os.makedirs("Saved Data Maps\\" + file_id)
                    
                 #saving the data file
-                savetxt('Saved Data Maps/activation.csv', self.act_val, 
-                        delimiter=',')
+                savetxt('Saved Data Maps\\' + file_id + '\\activation.csv', 
+                        self.act_val, delimiter=',')
                 
             elif self.ec_coupling_cb.isChecked() == True:
                 imaging_analysis = ImagingAnalysis.ImagingAnalysis()
@@ -2107,11 +2120,21 @@ class MainWindow(QWidget, Ui_MainWindow):
             start_time = float(self.start_time_edit.text())
             end_time = float(self.end_time_edit.text())
             apd_input = float(self.perc_apd_edit_01.text())/100
+            
+            #getting the file path the user selected
+            file_path = str(self.file_path)
+            #splitting the file path into an array by the /
+            file_path_obj = file_path.split('/')
+            #getting the length of this object
+            length = len(file_path_obj)
+            #grabbing the last object of the array, should be the file name the 
+            #user selected
+            file_id = file_path_obj[length-1]
 
             mapp2 = imaging_analysis.apd_analysis(self.data_fps, 
                                                   self.data_filt, start_ind, 
                                                   end_ind, interp_selection,
-                                                  apd_input)[0]
+                                                  apd_input, file_id)[0]
             imaging_analysis.imaging_mapping(mapp2, li1, li2, transp)
 
         # Generate data for succession of APDs
@@ -2212,6 +2235,16 @@ class MainWindow(QWidget, Ui_MainWindow):
             interp_selection = self.interp_drop.currentIndex()        
             start_time = float(self.start_time_edit.text())
             end_time = float(self.end_time_edit.text()) 
+            
+            #getting the file path the user selected
+            file_path = str(self.file_path)
+            #splitting the file path into an array by the /
+            file_path_obj = file_path.split('/')
+            #getting the length of this object
+            length = len(file_path_obj)
+            #grabbing the last object of the array, should be the file name the 
+            #user selected
+            file_id = file_path_obj[length-1]
 
             apd_input = float(self.perc_apd_edit_01.text())/100
             #call the alternan_50 function
@@ -2219,7 +2252,8 @@ class MainWindow(QWidget, Ui_MainWindow):
                                              li1, li2, transp, start_ind, 
                                              end_ind, start_ind2, end_ind2, 
                                              interp_selection, apd_input, 
-                                             self.image_type_drop.currentIndex())
+                                             self.image_type_drop.currentIndex(),
+                                             file_id)
             
         #Calculate and visualize moving Alternan
         if analysis_type == 4:
@@ -2232,10 +2266,21 @@ class MainWindow(QWidget, Ui_MainWindow):
             interp_selection = self.interp_drop.currentIndex()
             im_type=self.image_type_drop.currentIndex() 
             peak_coeff = float(self.perc_apd_edit_01.text())
+            
+            #getting the file path the user selected
+            file_path = str(self.file_path)
+            #splitting the file path into an array by the /
+            file_path_obj = file_path.split('/')
+            #getting the length of this object
+            length = len(file_path_obj)
+            #grabbing the last object of the array, should be the file name the 
+            #user selected
+            file_id = file_path_obj[length-1]
+            
             imaging_analysis.moving_alternan(self.data_fps, self.data_filt, 
                                              li1, li2, transp, start_ind, 
                                              end_ind, im_type, 
-                                             peak_coeff)
+                                             peak_coeff, file_id)
             
         #Calculate and visualize adjusted alternan
         if analysis_type == 5:
@@ -2247,10 +2292,21 @@ class MainWindow(QWidget, Ui_MainWindow):
             end_time = float(self.end_time_edit.text())
             interp_selection = self.interp_drop.currentIndex() 
             peak_coeff = float(self.perc_apd_edit_01.text())
+            
+            #getting the file path the user selected
+            file_path = str(self.file_path)
+            #splitting the file path into an array by the /
+            file_path_obj = file_path.split('/')
+            #getting the length of this object
+            length = len(file_path_obj)
+            #grabbing the last object of the array, should be the file name the 
+            #user selected
+            file_id = file_path_obj[length-1]
+            
             imaging_analysis.adjust_alternan(self.data_fps, self.data_filt, 
                                              li1, li2, transp, start_ind, 
                                              end_ind, interp_selection,
-                                             peak_coeff)
+                                             peak_coeff, file_id)
 
         # S1-S2 map
         if analysis_type == 6:
@@ -2264,12 +2320,22 @@ class MainWindow(QWidget, Ui_MainWindow):
             apd_input = float(self.perc_apd_edit_01.text())/100
             threshold= float(self.max_val_edit.text())
             
+            #getting the file path the user selected
+            file_path = str(self.file_path)
+            #splitting the file path into an array by the /
+            file_path_obj = file_path.split('/')
+            #getting the length of this object
+            length = len(file_path_obj)
+            #grabbing the last object of the array, should be the file name the 
+            #user selected
+            file_id = file_path_obj[length-1]
+            
             imaging_analysis.S1_S2(self.data_fps, self.data_filt, 
                                              li1, li2, transp, start_ind, 
                                              end_ind, start_ind2, end_ind2, 
                                              interp_selection, apd_input, 
                                              self.image_type_drop.currentIndex(),
-                                             peak_coeff, threshold)   
+                                             peak_coeff, threshold, file_id)   
             
         # Calculate and visualize SNR
         if analysis_type == 7:
@@ -2291,12 +2357,23 @@ class MainWindow(QWidget, Ui_MainWindow):
                     cmap='jet'),
                 cax=cax)
             
+            #getting the file path the user selected
+            file_path = str(self.file_path)
+            #splitting the file path into an array by the /
+            file_path_obj = file_path.split('/')
+            #getting the length of this object
+            length = len(file_path_obj)
+            #grabbing the last object of the array, should be the file name the 
+            #user selected
+            file_id = file_path_obj[length-1]
+            
             #making a folder if there isn't a "Saved Data Maps" folder
-            if not os.path.exists("Saved Data Maps"):
-               os.makedirs("Saved Data Maps")
+            if not os.path.exists("Saved Data Maps\\" + file_id):
+               os.makedirs("Saved Data Maps\\" + file_id)
                
             #saving the data file
-            savetxt('Saved Data Maps/snr.csv', self.snr, delimiter=',')
+            savetxt('Saved Data Maps\\' + file_id + '\\snr.csv', self.snr, 
+                    delimiter=',')
               
         # Repolarization map
         if analysis_type == 8: 
@@ -2355,13 +2432,23 @@ class MainWindow(QWidget, Ui_MainWindow):
              
             mm.mappable.set_clim(0,max_apd_val) 
             
+            #getting the file path the user selected
+            file_path = str(self.file_path)
+            #splitting the file path into an array by the /
+            file_path_obj = file_path.split('/')
+            #getting the length of this object
+            length = len(file_path_obj)
+            #grabbing the last object of the array, should be the file name the 
+            #user selected
+            file_id = file_path_obj[length-1]
+            
             #making a folder if there isn't a "Saved Data Maps" folder
-            if not os.path.exists("Saved Data Maps"):
-               os.makedirs("Saved Data Maps")
+            if not os.path.exists("Saved Data Maps\\" + file_id):
+               os.makedirs("Saved Data Maps\\" + file_id)
                
             #saving the data file
-            savetxt('Saved Data Maps/repolarization.csv', self.apd_val, 
-                    delimiter=',')
+            savetxt('Saved Data Maps\\' + file_id + '\\repolarization.csv', 
+                    self.apd_val, delimiter=',')
             
     def map_analysis_cbar(self, progress_callback):
         #defining _translate
@@ -2426,13 +2513,23 @@ class MainWindow(QWidget, Ui_MainWindow):
                     cax=cax, format='%.3f')
                 mm.mappable.set_clim(li1,li2)
                 
+                #getting the file path the user selected
+                file_path = str(self.file_path)
+                #splitting the file path into an array by the /
+                file_path_obj = file_path.split('/')
+                #getting the length of this object
+                length = len(file_path_obj)
+                #grabbing the last object of the array, should be the file name the 
+                #user selected
+                file_id = file_path_obj[length-1]
+                
                 #making a folder if there isn't a "Saved Data Maps" folder
-                if not os.path.exists("Saved Data Maps"):
-                   os.makedirs("Saved Data Maps")
+                if not os.path.exists("Saved Data Maps\\" + file_id):
+                   os.makedirs("Saved Data Maps\\" + file_id)
                    
                 #saving the data file
-                savetxt('Saved Data Maps/activation.csv', self.act_val, 
-                        delimiter=',')
+                savetxt('Saved Data Maps\\' + file_id + '\\activation.csv', 
+                        self.act_val, delimiter=',')
                 
             elif self.ec_coupling_cb.isChecked() == True:
                 imaging_analysis = ImagingAnalysis.ImagingAnalysis()
@@ -2461,10 +2558,22 @@ class MainWindow(QWidget, Ui_MainWindow):
             start_time = float(self.start_time_edit.text())
             end_time = float(self.end_time_edit.text())
             apd_input = float(self.perc_apd_edit_01.text())/100
+            
+            #getting the file path the user selected
+            file_path = str(self.file_path)
+            #splitting the file path into an array by the /
+            file_path_obj = file_path.split('/')
+            #getting the length of this object
+            length = len(file_path_obj)
+            #grabbing the last object of the array, should be the file name the 
+            #user selected
+            file_id = file_path_obj[length-1]
+                
             mapp2 = imaging_analysis.apd_analysis(self.data_fps, 
                                                   self.data_filt, start_ind, 
                                                   end_ind, interp_selection,
-                                                  apd_input)[0]
+                                                  apd_input, file_id)[0]
+            
             imaging_analysis.imaging_mapping(mapp2, li1, li2, transp)
             
         # Generate data for succession of APDs
@@ -2565,12 +2674,24 @@ class MainWindow(QWidget, Ui_MainWindow):
             end_time = float(self.end_time_edit.text())
             interp_selection = self.interp_drop.currentIndex()  
             apd_input = float(self.perc_apd_edit_01.text())/100
+            
+            #getting the file path the user selected
+            file_path = str(self.file_path)
+            #splitting the file path into an array by the /
+            file_path_obj = file_path.split('/')
+            #getting the length of this object
+            length = len(file_path_obj)
+            #grabbing the last object of the array, should be the file name the 
+            #user selected
+            file_id = file_path_obj[length-1]
+                
             #call the alternan_50 function
             imaging_analysis.alternan_50(self.data_fps, self.data_filt, 
                                              li1, li2, transp, start_ind, 
                                              end_ind, start_ind2, end_ind2, 
                                              interp_selection, apd_input,
-                                             self.image_type_drop.currentIndex())
+                                             self.image_type_drop.currentIndex(),
+                                             file_id)
             
         #Calculate and visualize moving Alternan
         if analysis_type == 4:
@@ -2581,10 +2702,21 @@ class MainWindow(QWidget, Ui_MainWindow):
             interp_selection = self.interp_drop.currentIndex()  
             im_type=self.image_type_drop.currentIndex()       
             peak_coeff = float(self.perc_apd_edit_01.text())
+            
+            #getting the file path the user selected
+            file_path = str(self.file_path)
+            #splitting the file path into an array by the /
+            file_path_obj = file_path.split('/')
+            #getting the length of this object
+            length = len(file_path_obj)
+            #grabbing the last object of the array, should be the file name the 
+            #user selected
+            file_id = file_path_obj[length-1]
+                
             imaging_analysis.moving_alternan(self.data_fps, self.data_filt, 
                                              li1, li2, transp, start_ind, 
                                              end_ind, im_type, 
-                                             peak_coeff)
+                                             peak_coeff, file_id)
             
         #Calculate and visualize adjusted alternan
         if analysis_type == 5:
@@ -2594,10 +2726,21 @@ class MainWindow(QWidget, Ui_MainWindow):
             end_time = float(self.end_time_edit.text())
             interp_selection = self.interp_drop.currentIndex()  
             peak_coeff = float(self.perc_apd_edit_01.text())
+            
+            #getting the file path the user selected
+            file_path = str(self.file_path)
+            #splitting the file path into an array by the /
+            file_path_obj = file_path.split('/')
+            #getting the length of this object
+            length = len(file_path_obj)
+            #grabbing the last object of the array, should be the file name the 
+            #user selected
+            file_id = file_path_obj[length-1]
+                
             imaging_analysis.adjust_alternan(self.data_fps, self.data_filt, 
                                              li1, li2, transp, start_ind, 
                                              end_ind, interp_selection,
-                                             peak_coeff)   
+                                             peak_coeff, file_id)   
             
         # S1 S2 map
         if analysis_type == 6:
@@ -2609,12 +2752,22 @@ class MainWindow(QWidget, Ui_MainWindow):
             apd_input = float(self.perc_apd_edit_01.text())/100
             threshold = float(self.max_val_edit.text())
             
+            #getting the file path the user selected
+            file_path = str(self.file_path)
+            #splitting the file path into an array by the /
+            file_path_obj = file_path.split('/')
+            #getting the length of this object
+            length = len(file_path_obj)
+            #grabbing the last object of the array, should be the file name the 
+            #user selected
+            file_id = file_path_obj[length-1]
+                
             imaging_analysis.S1_S2(self.data_fps, self.data_filt, 
                                              li1, li2, transp, start_ind, 
                                              end_ind, start_ind2, end_ind2, 
                                              interp_selection, apd_input, 
                                              self.image_type_drop.currentIndex(),
-                                             peak_coeff, threshold)       
+                                             peak_coeff, threshold, file_id)       
         # Calculate and visualize SNR
         if analysis_type == 7:
             # Calculate SNR
@@ -2635,12 +2788,23 @@ class MainWindow(QWidget, Ui_MainWindow):
                 cax=cax)
             mm.mappable.set_clim(li1,li2)
             
+            #getting the file path the user selected
+            file_path = str(self.file_path)
+            #splitting the file path into an array by the /
+            file_path_obj = file_path.split('/')
+            #getting the length of this object
+            length = len(file_path_obj)
+            #grabbing the last object of the array, should be the file name the 
+            #user selected
+            file_id = file_path_obj[length-1]
+            
             #making a folder if there isn't a "Saved Data Maps" folder
-            if not os.path.exists("Saved Data Maps"):
-               os.makedirs("Saved Data Maps")
+            if not os.path.exists("Saved Data Maps\\" + file_id):
+               os.makedirs("Saved Data Maps\\" + file_id)
                
             #saving the data file
-            savetxt('Saved Data Maps/snr.csv', self.snr, delimiter=',')
+            savetxt('Saved Data Maps\\' + file_id + '\\snr.csv', self.snr, 
+                    delimiter=',')
             
         # Repolarization Map
         if analysis_type == 8: 
@@ -2697,16 +2861,57 @@ class MainWindow(QWidget, Ui_MainWindow):
                 cax=cax, format='%.3f') 
             mm.mappable.set_clim(li1,li2)
             
+            #getting the file path the user selected
+            file_path = str(self.file_path)
+            #splitting the file path into an array by the /
+            file_path_obj = file_path.split('/')
+            #getting the length of this object
+            length = len(file_path_obj)
+            #grabbing the last object of the array, should be the file name the 
+            #user selected
+            file_id = file_path_obj[length-1]
+            
             #making a folder if there isn't a "Saved Data Maps" folder
-            if not os.path.exists("Saved Data Maps"):
-               os.makedirs("Saved Data Maps")
+            if not os.path.exists("Saved Data Maps\\" + file_id):
+               os.makedirs("Saved Data Maps\\" + file_id)
                
             #saving the data file
-            savetxt('Saved Data Maps/repolarization.csv', self.apd_val, 
-                    delimiter=',')
+            savetxt('Saved Data Maps\\' + file_id + '\\repolarization.csv', 
+                    self.apd_val, delimiter=',')
             
+    #creating a function to organize the post data analysis and only show the means
+    def mean_post_mapping_data_analysis(self):
+        #getting the file path the user selected
+        file_path = str(self.file_path)
+        #splitting the file path into an array by the /
+        file_path_obj = file_path.split('/')
+        #getting the length of this object
+        length = len(file_path_obj)
+        #grabbing the last object of the array, should be the file name the 
+        #user selected
+        file_id = file_path_obj[length-1]
+        #calling the mean post analysis function
+        ImagingAnalysis.ImagingAnalysis().mean_post_analysis(file_id)
+    
+    #creating a function to analyze the data with regional analysis
     def post_mapping_data_analysis(self):
-        ImagingAnalysis.ImagingAnalysis().post_analysis()
+        #setting the mean post mapping analysis button to true
+        self.mean_post_mapping_analysis.setEnabled(True)
+        li1 = 0
+        li2 = 70
+        
+        #getting the file path the user selected
+        file_path = str(self.file_path)
+        #splitting the file path into an array by the /
+        file_path_obj = file_path.split('/')
+        #getting the length of this object
+        length = len(file_path_obj)
+        #grabbing the last object of the array, should be the file name the 
+        #user selected
+        file_id = file_path_obj[length-1]
+        
+        #calling the post analysis function
+        ImagingAnalysis.ImagingAnalysis().post_analysis(li1, li2, file_id, self.file_name)
         
     def export_data_numeric(self):
         # Determine if data is prepped or unprepped
