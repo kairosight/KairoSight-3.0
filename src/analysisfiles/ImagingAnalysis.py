@@ -122,9 +122,7 @@ class ImagingAnalysis:
                     end=end+start
                     win1=1000
                     for k in range(start,end):
-                        if imgf[k,j,i] > (((1-perc_apd) - 0.05) 
-                                          and imgf[k,j,i] < 
-                                          ((1-perc_apd) + 0.05)):
+                        if imgf[k,j,i] > ((1-perc_apd) - 0.05) and imgf[k,j,i] < ((1-perc_apd) + 0.05):
                             win=abs((1-perc_apd)-imgf[k,j,i])
                             if win<win1:
                                 win1=win
@@ -165,9 +163,7 @@ class ImagingAnalysis:
                     end=end+start
                     win1=1000
                     for k in range(start,end):
-                        if imgf_2[k,j,i] > (((1-perc_apd) - 0.05) 
-                                            and imgf_2[k,j,i] < 
-                                            ((1-perc_apd) + 0.05)):
+                        if imgf_2[k,j,i] > ((1-perc_apd) - 0.05) and imgf_2[k,j,i] < ((1-perc_apd) + 0.05):
                             win=abs((1-perc_apd)-imgf_2[k,j,i]) 
                             if win<win1:
                                 win1=win
