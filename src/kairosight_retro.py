@@ -1,3 +1,34 @@
+#Kairosight 3.0 - Open Source Software Update
+
+#This is an open-source code repository for Kairosight 3.0, an updated version of the 
+#Kairosight software.  this Python code provides advanced signal analysis and visualization 
+#tools for research and analysis purposes.
+
+#Kairosight 3.0 is released under an open license, allowing users to modify and utilize 
+#the codebase while adhering to proper citation practices. We kindly request that any usage 
+#or modifications of this code be appropriately cited to acknowledge the contributions of 
+#the original developers.
+
+#The new features introduced in Kairosight 3.0 include:
+
+# 1.User-defined masking tool
+# 2.SNR mapping tool
+# 3.Signal duration measurements using updated algorithms
+# 4.AP and CaT alternan maps
+# 5.AP-CaT coupling maps
+# 6.Conduction velocity (CV) module
+# 7.AP and CaT mapping tool in response to extrasystolic stimulation (S1-S2)
+# 8.Region of interest (ROI) analysis
+
+#For inquiries and feedback, please contact us at b26kth@mun.ca. 
+#You can find more details about the project in our preprint on bioRxiv: 
+ #  https://www.biorxiv.org/content/10.1101/2023.05.01.538926v1.abstract
+
+# Enjoy using Kairosight 3.0 for your research needs!
+# Date: 07/14/2023
+
+# Developers : Kazi T. Haq and Anysja Roberts
+
 from analysisfiles import ImagingAnalysis
 import cv2
 import math
@@ -2050,6 +2081,37 @@ class MainWindow(QWidget, Ui_MainWindow):
         self.colorbar_map_update.setEnabled(True)
         
         # Generate activation map
+        # Calculate the APD 80
+        
+        if analysis_type == 1:
+            if self.ec_coupling_cb.isChecked() == False:
+                print('bokchod')
+                imaging_analysis = ImagingAnalysis.ImagingAnalysis()
+                li1 = "no preset min"
+                li2 = "no preset max"
+                interp_selection = self.interp_drop.currentIndex()        
+                start_time = float(self.start_time_edit.text())
+                end_time = float(self.end_time_edit.text())
+                apd_input = float(self.perc_apd_edit_01.text())/100
+            
+            #getting the file path the user selected
+                file_path = str(self.file_path)
+            #splitting the file path into an array by the /
+                file_path_obj = file_path.split('/')
+            #getting the length of this object
+                length = len(file_path_obj)
+            #grabbing the last object of the array, should be the file name the 
+            #user selected
+                file_id = file_path_obj[length-1]
+
+                mapp2 = imaging_analysis.apd_analysis(self.data_fps, 
+                                                      self.data_filt, start_ind, 
+                                                      end_ind, interp_selection,
+                                                      apd_input, file_id)[0]
+                imaging_analysis.imaging_mapping(mapp2, li1, li2, transp)        
+        
+        
+        
         if analysis_type == 0:
             if self.ec_coupling_cb.isChecked() == False:
                 #np.savetxt('act.txt',self.data_filt)
@@ -2092,7 +2154,17 @@ class MainWindow(QWidget, Ui_MainWindow):
                 savetxt('Saved Data Maps\\' + file_id + '\\activation.csv', 
                         self.act_val, delimiter=',')
                 
-            elif self.ec_coupling_cb.isChecked() == True:
+        if self.ec_coupling_cb.isChecked() == True: 
+                #getting the file path the user selected
+                file_path = str(self.file_path)
+                #splitting the file path into an array by the /
+                file_path_obj = file_path.split('/')
+                #getting the length of this object
+                length = len(file_path_obj)
+                #grabbing the last object of the array, should be the file name the 
+                #user selected
+                file_id = file_path_obj[length-1]
+                
                 imaging_analysis = ImagingAnalysis.ImagingAnalysis()
                 li1 = "no preset min"
                 li2 = "no preset max"
@@ -2103,39 +2175,15 @@ class MainWindow(QWidget, Ui_MainWindow):
                 if analysis_type == 0: 
                     imaging_analysis.ec_coupling_map_act(li1, li2, transp, 
                                                          start_ind, end_ind,
-                                                         interp_selection)
+                                                         interp_selection, file_id)
                 if analysis_type == 1:   
                     apd_perc= float(self.perc_apd_edit_01.text())/100
                     imaging_analysis.ec_coupling_map_rep(self.data_fps, li1, 
                                                          li2, transp, start_ind,
                                                          end_ind, apd_perc,
-                                                         interp_selection)
+                                                         interp_selection, file_id)
+              
 
-        # Calculate the APD 80
-        if analysis_type == 1:
-            imaging_analysis = ImagingAnalysis.ImagingAnalysis()
-            li1 = "no preset min"
-            li2 = "no preset max"
-            interp_selection = self.interp_drop.currentIndex()        
-            start_time = float(self.start_time_edit.text())
-            end_time = float(self.end_time_edit.text())
-            apd_input = float(self.perc_apd_edit_01.text())/100
-            
-            #getting the file path the user selected
-            file_path = str(self.file_path)
-            #splitting the file path into an array by the /
-            file_path_obj = file_path.split('/')
-            #getting the length of this object
-            length = len(file_path_obj)
-            #grabbing the last object of the array, should be the file name the 
-            #user selected
-            file_id = file_path_obj[length-1]
-
-            mapp2 = imaging_analysis.apd_analysis(self.data_fps, 
-                                                  self.data_filt, start_ind, 
-                                                  end_ind, interp_selection,
-                                                  apd_input, file_id)[0]
-            imaging_analysis.imaging_mapping(mapp2, li1, li2, transp)
 
         # Generate data for succession of APDs
         if analysis_type == 2:
@@ -2488,6 +2536,35 @@ class MainWindow(QWidget, Ui_MainWindow):
         
         imaging_analysis = ImagingAnalysis.ImagingAnalysis()
         
+        
+                # Calculate the APD 80
+        if analysis_type == 1:
+            if self.ec_coupling_cb.isChecked() == False:
+                imaging_analysis = ImagingAnalysis.ImagingAnalysis()
+                self.act_ind = calc_tran_activation(
+                    self.data_filt, start_ind, end_ind)
+                interp_selection = self.interp_drop.currentIndex()        
+                start_time = float(self.start_time_edit.text())
+                end_time = float(self.end_time_edit.text())
+                apd_input = float(self.perc_apd_edit_01.text())/100
+            
+            #getting the file path the user selected
+                file_path = str(self.file_path)
+            #splitting the file path into an array by the /
+                file_path_obj = file_path.split('/')
+            #getting the length of this object
+                length = len(file_path_obj)
+            #grabbing the last object of the array, should be the file name the 
+            #user selected
+                file_id = file_path_obj[length-1]
+                
+                mapp2 = imaging_analysis.apd_analysis(self.data_fps, 
+                                                      self.data_filt, start_ind, 
+                                                      end_ind, interp_selection,
+                                                      apd_input, file_id)[0]
+            
+                imaging_analysis.imaging_mapping(mapp2, li1, li2, transp)
+        
         # Generate activation map
         if analysis_type == 0:
             if self.ec_coupling_cb.isChecked() == False:
@@ -2531,9 +2608,19 @@ class MainWindow(QWidget, Ui_MainWindow):
                 savetxt('Saved Data Maps\\' + file_id + '\\activation.csv', 
                         self.act_val, delimiter=',')
                 
-            elif self.ec_coupling_cb.isChecked() == True:
+        if self.ec_coupling_cb.isChecked() == True: 
+                #getting the file path the user selected
+                file_path = str(self.file_path)
+                #splitting the file path into an array by the /
+                file_path_obj = file_path.split('/')
+                #getting the length of this object
+                length = len(file_path_obj)
+                #grabbing the last object of the array, should be the file name the 
+                #user selected
+                file_id = file_path_obj[length-1]
+                
                 imaging_analysis = ImagingAnalysis.ImagingAnalysis()
-
+          
                 #imaging_analysis.ec_coupling_signal_load(self.signal_coord)
                 
                 interp_selection = self.interp_drop.currentIndex() 
@@ -2541,40 +2628,14 @@ class MainWindow(QWidget, Ui_MainWindow):
                 if analysis_type == 0: 
                     imaging_analysis.ec_coupling_map_act(li1, li2, transp, 
                                                          start_ind, end_ind,
-                                                         interp_selection)
-                if analysis_type == 1:     
+                                                         interp_selection, file_id)
+                if analysis_type == 1:   
                     apd_perc= float(self.perc_apd_edit_01.text())/100
                     imaging_analysis.ec_coupling_map_rep(self.data_fps, li1, 
                                                          li2, transp, start_ind,
                                                          end_ind, apd_perc,
-                                                         interp_selection)    
-        # Calculate the APD 80
-        if analysis_type == 1:
-            
-            imaging_analysis = ImagingAnalysis.ImagingAnalysis()
-            self.act_ind = calc_tran_activation(
-                self.data_filt, start_ind, end_ind)
-            interp_selection = self.interp_drop.currentIndex()        
-            start_time = float(self.start_time_edit.text())
-            end_time = float(self.end_time_edit.text())
-            apd_input = float(self.perc_apd_edit_01.text())/100
-            
-            #getting the file path the user selected
-            file_path = str(self.file_path)
-            #splitting the file path into an array by the /
-            file_path_obj = file_path.split('/')
-            #getting the length of this object
-            length = len(file_path_obj)
-            #grabbing the last object of the array, should be the file name the 
-            #user selected
-            file_id = file_path_obj[length-1]
-                
-            mapp2 = imaging_analysis.apd_analysis(self.data_fps, 
-                                                  self.data_filt, start_ind, 
-                                                  end_ind, interp_selection,
-                                                  apd_input, file_id)[0]
-            
-            imaging_analysis.imaging_mapping(mapp2, li1, li2, transp)
+                                                         interp_selection, file_id)
+
             
         # Generate data for succession of APDs
         if analysis_type == 2:
